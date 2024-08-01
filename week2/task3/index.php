@@ -79,7 +79,7 @@
                         <li><a class="dropdown-item" href="#">Sign out</a></li>
                         </ul>
                     </div>
-                </div>
+                </div><!--col-->
 
                 <div class="col-sm-8">
                     <?php foreach($posts as $post) { ?>
@@ -119,8 +119,9 @@
                             </div>
                         </div>
                     <?php } ?>
-                </div>
-            </div>
+                </div><!--col-->
+
+            </div><!--row-->
         </div><!--/.container-->
 
 

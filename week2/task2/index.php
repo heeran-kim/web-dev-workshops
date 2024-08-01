@@ -45,7 +45,7 @@
     
 
             <div class="row" id="content">
-                <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark col-sm-4">
+            <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark col-sm-4">
                     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                       <svg class="bi pe-none me-2" width="0" height="32"><use xlink:href="#bootstrap"/></svg>
                       <span class="fs-4">Sidebar</span>
@@ -75,10 +75,9 @@
                         <li><a class="dropdown-item" href="#">Sign out</a></li>
                         </ul>
                     </div>
-                </div>
+                </div><!--col-->
 
                 <div class="col-sm-8">
-                    <!-- Posting Part -->
                     <?php foreach($posts as $post) { ?>
                         <div class="post border border-dark-subtle rounded-end my-3 p-2">
                             <div class="d-flex">
@@ -95,7 +94,8 @@
                                 <?= $comment['user'] ?>:<?= $comment['message'] ?>
                             <?php } ?>
                             </div>
-
+                            
+                            <div class="container mt-3">
                                 <form class="d-flex align-items-center">
                                     <img src="https://github.com/mdo.png" alt="User Avatar" width="32" height="32" class="rounded-circle me-2">
                                     <div class="form-floating flex-grow-1 me-2">
