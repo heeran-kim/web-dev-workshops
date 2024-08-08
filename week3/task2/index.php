@@ -1,0 +1,155 @@
+<?php
+    require 'classes/postSeeder.php';
+    use wad\PostSeeder;
+
+    session_start();
+
+    // Retrieve posts from session if available, otherwise seed new posts
+    // isset: Checking if the key exists and has a non-NULL value
+    if (isset($_SESSION['posts'])) {
+        $posts = $_SESSION['posts'];
+    } else {
+        $posts = PostSeeder::seed();
+        $_SESSION['posts'] = $posts;
+    }
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <title>Home</title>
+    </head>
+    <body>
+        <div class="container">
+          
+            <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+            <a href="index.html" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+                <span class="fs-4">Social Media</span>
+            </a>
+                  
+            <div class="col-md-3 mb-2 mb-md-0">
+                <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+                <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
+                </a>
+            </div>
+        
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="#" class="nav-link px-2">Photos</a></li>
+                <li><a href="#" class="nav-link px-2">Friends</a></li>
+            </ul>
+        
+            <div class="col-md-3 text-end">
+                <button type="button" class="btn btn-outline-primary me-2">Login</button>
+                <button type="button" class="btn btn-primary">Sign-up</button>
+            </div>
+            </header>
+
+    
+
+            <div class="row" id="content">
+                <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark col-sm-4">
+                    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                      <svg class="bi pe-none me-2" width="0" height="32"><use xlink:href="#bootstrap"/></svg>
+                      <span class="fs-4">Sidebar</span>
+                    </a>
+                    <hr>
+
+                    <form method="get" action="index2.php">
+                        <label>Name:</label><input name="name" type="text"><br>
+                        <label>Message:</label><textarea name="message" id="messageInput" placeholder="Enter new message.."></textarea>
+                        <br>
+                        <input type="submit" class="nav-link active" value="submit" aria-current="page">
+                    </form>
+
+
+                    <hr>
+                    
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                        <strong>John</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">Sign out</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-8">
+                    <?php foreach($posts as $post) { ?>
+                        <div class="post border border-dark-subtle rounded-end my-3 p-2">
+                            <div class="d-flex">
+                                <img src="<?= $post->getImage() ?>" width=200 alt="cat" class="rounded-5 float-start me-5"><br>
+                                Name: <?= $post->getUser() ?><br>
+                                Message: <?= $post->getMessage() ?><br>
+                                Date: <?= $post->getDate() ?><br>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div>
+                            <?php foreach($post->getComments() as $comment) { ?>
+                                <?= $comment->getUser() ?>:<?= $comment->getMessage() ?><br>
+                            <?php } ?>
+                            </div>
+
+                            <div class="container mt-3">
+                                <!--
+                                    form generation: using `form` tag
+                                    method: using `method` attribute
+                                        There are two method to send information from the browser to a server
+                                        GET - sends variables in the URL
+                                        POST - sends variables in the message body 
+                    
+                                    action: what to do, using `action` attribute
+                                -->
+                                <form method="get" action="index2.php" class="d-flex align-items-center">
+                                    <img src="https://github.com/mdo.png" alt="User Avatar" width="32" height="32" class="rounded-circle me-2">
+                                    
+                                    <!-- text area named `comment` to send: name is the key of the value -->
+                                    <div class="form-floating flex-grow-1 me-2">
+                                        <textarea name="comment" class="form-control me-2" placeholder="Leave a comment here" style="flex: 1;"></textarea>
+                                        <label for="floatingTextarea">Comments</label>
+                                    </div>
+                                    
+                                    <!-- submit button with image: type="submit" -->
+                                    <button class="btn" type="submit">
+                                        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.56 122.88" width="32" height="32">
+                                            <defs>
+                                                <style>.cls-1{fill-rule:evenodd;}</style>
+                                            </defs>
+                                            <path class="cls-1" d="M2.33,44.58,117.33.37a3.63,3.63,0,0,1,5,4.56l-44,115.61h0a3.63,3.63,0,0,1-6.67.28L53.93,84.14,89.12,33.77,38.85,68.86,2.06,51.24a3.63,3.63,0,0,1,.27-6.66Z"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div><!--/.container-->
+
+
+        <div class="container">
+            <footer class="py-3 my-4">
+              <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Home</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Photos</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">Friends</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">FAQs</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-body-secondary">About</a></li>
+              </ul>
+              <p class="text-center text-body-secondary">&copy; 2024 Company, Inc</p>
+            </footer>
+          </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    </body>
+</html>
