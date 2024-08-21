@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Comment;
 use App\Models\Posting;
 use Illuminate\Http\Request;
@@ -15,6 +14,8 @@ class PostingController extends Controller
             'user:id,name',
             'comments:posting_id,message,updated_at,user_id',
             'comments.user:id,name'])->get();
+        
+        $postings = Posting::orderBy('updated_at', 'desc')->get();
 
         return view('postings.index', [
             'postings' => $postings
@@ -52,6 +53,16 @@ class PostingController extends Controller
 
         Comment::create($formFields);
 
-        return back();
+        return redirect('/' . '#posting-' . $posting->id);
+    }
+
+    // destroy: delete posting
+    function destroy (Posting $posting) {
+        if ($posting->user_id != auth()->id()){
+            abort(403, 'Unauthorised Action');
+        }
+
+        $posting->delete();
+        return redirect('/');
     }
 }

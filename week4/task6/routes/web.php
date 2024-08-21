@@ -22,6 +22,9 @@ Route::get('/register', [UserController::class, 'create'])->middleware('guest');
 // store: store user info into database
 Route::post('/users', [UserController::class, 'store'])->middleware('guest');
 
+// Delete posting
+Route::delete('/postings/{posting}', [PostingController::class, 'destroy'])->middleware('auth');
+
 // logout
 Route::post('/logout', [UserController::class, 'logout'])->middleware('auth');
 

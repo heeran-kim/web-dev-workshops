@@ -21,6 +21,10 @@ class UserController extends Controller
             'password' => ['required', 'confirmed', 'min:6']
         ]);
 
+        if($request->hasFile('photo')) {
+            $formFields['photo'] = $request->file('photo')->store('images/users', 'public');
+        }
+        
         // Hash Password; you never want to store plain password (bcrypt.js)
         $formFields['password'] = bcrypt($formFields['password']);
 
