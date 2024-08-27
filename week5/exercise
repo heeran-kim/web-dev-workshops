@@ -1,0 +1,27 @@
+a) Which stock has Sally ordered?
+A. 
+SELECT Stock.Name AS "Stock Name Sally Ordered"
+FROM Stock, Orders, Customers
+WHERE
+    Stock.Id = Orders.ItemId AND
+    Customers.Id = Orders.CustId AND
+    -- Customers.Name = "Sally"
+    Customers.Name = 'Sally'
+;
+
+b) What are the names of customers who live in Nathan?
+A.
+SELECT Name AS "Customer Name who Live in Nathan"
+FROM Customers
+WHERE Customers.Address LIKE '%, Nathan';
+
+c) What are the names of customers who have bought Marcel’s Morsels?
+Note: there is a small catch here where you need to deal with ‘ in the string.
+A.
+SELECT Customers.Name AS "Customer Name who have bought Marcel's Morsels"
+FROM Customers, Orders, Stock
+WHERE
+    Customers.Id = Orders.CustId AND
+    Stock.Id = Orders.ItemId AND
+    Stock.Name = "Marcel's Morsels"
+;
