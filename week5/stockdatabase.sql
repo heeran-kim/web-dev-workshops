@@ -73,3 +73,14 @@ INSERT INTO Orders(ItemId, CustId, OrderDate, Quantity)
  * were more than one customer named "Bob" (which is possible with
  * this schema).
  */ 
+
+
+-- sqlite3 stockdb.sqlite
+-- .read stockdatabase.sql
+-- .tables
+-- .headers on
+-- SELECT * FROM Stock;
+-- SELECT * FROM Customers;
+-- .dump Stock
+-- .dump Customers
+-- .help
