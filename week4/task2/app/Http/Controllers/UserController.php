@@ -66,8 +66,8 @@ class UserController extends Controller
         // Validate the input data
         // You can also use request()->validate() instead of $request->validate().
         $formFields = $request->validate([
-            'name' => ['required', 'min:3', 'max:50'],
-            'age' => ['required', 'numeric', 'min:18', 'max:100']
+            'name' => 'required|regex:/^[a-zA-Z\s-]+$/|min:3|max:50',
+            'age' => 'required|numeric|min:18|max:100'
         ]);
 
         // Store the validated data in the session

@@ -18,10 +18,10 @@ use Illuminate\Support\Facades\Route;
  * - The Route class provides static methods for defining these routes.
  * 
  * Common Route Methods:
- * - Route::get()    : Defines a route that responds to a GET request.
- * - Route::post()   : Defines a route that responds to a POST request.
- * - Route::put()    : Defines a route that responds to a PUT request.
- * - Route::delete() : Defines a route that responds to a DELETE request.
+ * - Route::get()    : Defines a route that responds to a GET request for retreiving data.
+ * - Route::post()   : Defines a route that responds to a POST request for creating new resources or submitting data.
+ * - Route::put()    : Defines a route that responds to a PUT request for updating an existing resource completely.
+ * - Route::delete() : Defines a route that responds to a DELETE request for deleting a resource.
  * - Route::match()  : Allows you to specify multiple HTTP methods that a route should respond to.
  *                      e.g. array('GET', 'POST')
  * - Route::any()    : Defines a route that can respond to any HTTP method.
