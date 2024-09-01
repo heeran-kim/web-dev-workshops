@@ -1,11 +1,9 @@
-<x-master title="| Owners">
+<x-master title="| Users">
     <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-            <h3>
-                All Users
-            </h3>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h3 class="m-0">All Users</h3>
             
-            <select class="form-select mb-3" style="width: 250px;">
+            <select class="form-select-sm">
                 <option selected>Newest</option>
                 <option value="1">Highest Rating</option>
                 <option value="2">Lowest Rating</option>
@@ -14,35 +12,36 @@
             </select>
         </div>
 
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            @foreach ($owners as $owner)
-            <div class="col">
-                <a href="owners/{{$owner->Id}}" class="text-reset text-decoration-none">
-                    <div class="card">
-                        {{-- <img src="{{asset($listing->Image)}}" class="card-img-top" alt="{{$listing->Image}}" style="height: 200px; object-fit: cover;"> --}}
-                        <div class="card-body">
-                            <h5 class="card-title">{{$owner->Name}}</h5>
-                            {{-- <p class="card-text">{{$listing->City}}, {{$listing->State}}</p> --}}
-                        </div>
-                        
-                        <div class="card-footer">
-                            <small class="text-body-secondary">
-                                @for ($i=0; $i<5; $i++)
-                                    @if ($i<floor($owner->AverageRating))
-                                        <i class="bi bi-star-fill"></i>
-                                    @elseif ($i<$owner->AverageRating)
-                                        <i class="bi bi-star-half"></i>
+        @if ($users)
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach ($users as $user)
+                    <div class="col">
+                        <div class="card">
+                            <a href={{url("users/$user->UserId")}} class="text-decoration-none text-reset">
+                                {{-- RENT / BRIEF ADDRESS --}}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{$user->UserName}}</h5>
+                                    <p class="card-text">{{"Has ".$user->ListingCount." listing(s)"}}</p>
+                                </div>
+                                
+                                {{-- RATING --}}
+                                <div class="card-footer">
+                                    @if ($user->ReviewStat)
+                                        <x-rating :Rating="$user->ReviewStat->AverageRating" />
+                                        <small class="text-body-secondary">
+                                            {{$user->ReviewStat->AverageRating . " (" . $user->ReviewStat->ReviewCount . ")"}}
+                                        </small>
                                     @else
-                                        <i class="bi bi-star"></i>
+                                        <small>No Reviews Found</small>
                                     @endif
-                                @endfor
-                                {{number_format($owner->AverageRating, 1)." (".$owner->ReviewCount.")"}}
-                            </small>
+                                </div>
+                            </a>
                         </div>
-                    </div>
-                </a>
+                    </div>                
+                @endforeach
             </div>
-            @endforeach
-        </div>
+        @else
+            <div class="text-center">No Users Found</div>
+        @endunless
     </div>
 </x-master>

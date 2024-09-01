@@ -21,13 +21,7 @@ CREATE TABLE IF NOT EXISTS Listings (
     IsFurnished     BOOLEAN,
     IsBillIncluded  BOOLEAN,
     Description     TEXT,
-    OwnerID         INTEGER     NOT NULL    REFERENCES Users(Id)
-);
-
-CREATE TABLE IF NOT EXISTS Images (
-    Id              INTEGER     PRIMARY KEY,
-    Path            VARCHAR(50) NOT NULL,
-    ListingID       INTEGER     NOT NULL    REFERENCES Listings(Id)
+    UserId          INTEGER     NOT NULL    REFERENCES Users(Id)
 );
 
 CREATE TABLE IF NOT EXISTS Reviews (
@@ -35,8 +29,8 @@ CREATE TABLE IF NOT EXISTS Reviews (
     Rating          INTEGER     NOT NULL    CHECK(Rating IN (1, 2, 3, 4, 5)),
     Date            DATE,
     Review          TEXT,
-    ListingID       INTEGER     NOT NULL    REFERENCES Listings(Id),
-    UserID          INTEGER     NOT NULL    REFERENCES Users(Id)
+    ListingId       INTEGER     NOT NULL    REFERENCES Listings(Id),
+    UserId          INTEGER     NOT NULL    REFERENCES Users(Id)
 );
 
 INSERT INTO Users(Name, Email, Password)
@@ -45,7 +39,7 @@ INSERT INTO Users(Name, Email, Password)
     ("Jinwoo",      "jinwookim@gmail.com",  "password"),
     ("John Doe",    "johndoe@gmail.com",    "password");
 
-INSERT INTO Listings (Title, Street, City, State, Rent, AvailableDate, IsFurnished, IsBillIncluded, Description, OwnerID)
+INSERT INTO Listings (Title, Street, City, State, Rent, AvailableDate, IsFurnished, IsBillIncluded, Description, UserId)
     VALUES 
     ('Cozy Studio',
     '123 Elm Street', 'Sydney', 'NSW',
@@ -71,91 +65,10 @@ INSERT INTO Listings (Title, Street, City, State, Rent, AvailableDate, IsFurnish
     'This luxury apartment in Perth offers premium living with top-notch amenities. The apartment is fully furnished and includes all utilities, making it ideal for professionals. Located in an upscale area, it is close to fine dining, shopping, and cultural attractions. The building features a gym, pool, and 24-hour security.',
     3);
 
-INSERT INTO Images(Path, ListingID)
-    VALUES 
-    ('/images/listing1_img1.jpg', 1),
-    ('/images/listing1_img2.jpg', 1),
-    ('/images/listing1_img3.jpg', 1), 
-    ('/images/listing1_img4.jpg', 1),
-    ('/images/listing2_img1.jpg', 2),
-    ('/images/listing2_img2.jpg', 2),
-    ('/images/listing2_img3.jpg', 2),
-    ('/images/listing2_img4.jpg', 2),
-    ('/images/listing3_img1.jpg', 3),
-    ('/images/listing3_img2.jpg', 3),
-    ('/images/listing3_img3.jpg', 3),
-    ('/images/listing3_img4.jpg', 3),
-    ('/images/listing4_img1.jpg', 4),
-    ('/images/listing4_img2.jpg', 4),
-    ('/images/listing4_img3.jpg', 4),
-    ('/images/listing4_img4.jpg', 4)
-    ;
-
-INSERT INTO Reviews(Rating, Date, Review, ListingID, UserID)
+INSERT INTO Reviews(Rating, Date, Review, ListingId, UserId)
     VALUES
     (4, '2024-08-15', 'Great location and cozy space. Highly recommend!',               1, 2),
     (3, '2024-08-20', 'Spacious house but had some issues with the heating.',           1, 2),
     (5, '2024-09-01', 'Absolutely loved the modern flat! Everything was perfect.',      2, 2),
     (4, '2024-10-30', 'Beautiful view and close to the beach. Would stay again.',       2, 2),
     (3, '2024-11-10', 'Nice loft but a bit noisy at night. Great access to downtown.',  3, 1);
-
--- HOME PAGE: LISTINGS
-SELECT
-    L.Id                AS "Id",
-    L.Rent              AS "Rent",
-    L.City              AS "City",
-    L.State             AS "State",
-    AVG(R.Rating)       AS "AverageRating",
-    COUNT(R.Rating)     AS "ReviewCount",
-    MIN(I.Path)         AS "Image"              -- Alphabetically first image path
-FROM Reviews AS R, Listings AS L, Images AS I
-WHERE
-    L.Id = I.ListingID AND
-    L.Id = R.ListingID
-GROUP BY L.Id;
-
--- REVIEW PAGE: LISTING
-SELECT
-    L.Title             AS "Title",
-    U.Name              AS "Owner",
-    L.Rent              AS "Rent",
-    L.Street            AS "Street",
-    L.City              AS "City",
-    L.State             AS "State",
-    L.AvailableDate     AS "AvailableDate",
-    L.Description       AS "Description",
-    L.IsFurnished       AS "IsFurnished",
-    L.IsBillIncluded    AS "IsBillIncluded", 
-    AVG(R.Rating)       AS "AverageRating",
-    COUNT(R.Rating)     AS "ReviewCount"
-FROM Reviews AS R, Users AS U, Listings AS L
-WHERE R.ListingID = L.Id AND L.OwnerID = U.Id AND L.Id = 1;
-
--- REVIEW PAGE: ALL IMAGES
-SELECT
-    I.Path              AS "Image"
-FROM Listings AS L, Images AS I
-WHERE L.Id = I.ListingID AND L.Id = 1;
-
--- REVIEW PAGE: ALL REVIEWS
-SELECT
-    U.Name              AS "Reviewer",
-    R.Rating            AS "Rating",
-    R.Date              AS "Date",
-    R.Review            AS "Review"
-FROM Reviews AS R, Users AS U, Listings AS L
-WHERE R.ListingID = L.Id AND R.UserID = U.Id AND L.Id = 1;
-
--- OWNER PAGE
-SELECT
-    U.Id                AS 'Id',
-    U.Name              AS 'Name',
-    AVG(NT.Average)     AS 'AverageRating',
-    SUM(NT.Count)       AS 'ReviewCount'
-FROM Listings AS L, Users AS U, (SELECT L.Id AS 'ListingId', AVG(R.Rating) AS 'Average', COUNT(R.Rating) AS 'Count'
-                                FROM Reviews AS R, Listings AS L
-                                WHERE R.ListingID = L.Id
-                                GROUP BY L.Id) AS NT
-WHERE L.OwnerID = U.Id AND NT.ListingId = L.Id
-GROUP BY U.Name
-ORDER BY Average DESC

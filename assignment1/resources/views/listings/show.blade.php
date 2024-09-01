@@ -1,105 +1,92 @@
 <x-master title="| Show">
     <div class="container">
         <div class="bg-light p-3 border rounded shadow-sm">
-            {{-- TITLE/RATING/EDIT --}}
+            {{-- TITLE/RATING/EDIT/DELETE --}}
             <div class="d-flex justify-content-between">
-                <h3>{{$listing[0]->Title}}</h3>
+                <h3>{{$listing->Title}}</h3>
                 <div>
-                    <x-rating :Rating="$listing[0]->AverageRating" />
-                    <small class="text-body-secondary">
-                        {{$listing[0]->AverageRating . " (".$listing[0]->ReviewCount.")"}}
-                    </small>
-                    <a href="/listings/{{$listing[0]->Id}}/edit" class="text-reset"><i class="bi bi-pencil"></i></a>
+                    @if ($listing->ReviewStat->AverageRating)
+                        <x-rating :Rating="$listing->ReviewStat->AverageRating" />
+                        <small class="text-body-secondary">
+                            {{$listing->ReviewStat->AverageRating . " (" . $listing->ReviewStat->ReviewCount . ")"}}
+                        </small>
+                    @else
+                        <small>No Reviews Found</small>
+                    @endif
+                    
+                    <a href={{url("listings/$listing->ListingId/edit")}} class="text-reset"><i class="bi bi-pencil"></i></a>
+                    
+                    <form method="POST" action={{url("listings/$listing->ListingId")}} class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="border-0 bg-transparent p-0"><i class="bi bi-trash3"></i></button>
+                    </form>
                 </div>
-            </div>
-            
-            {{-- IMAGES --}}
-            <div id="carouselExampleIndicators" class="carousel slide" style="height: 50vh;">
-                <div class="carousel-inner">
-                    @foreach ($images as $image)
-                        <div class="carousel-item {{$loop->first ? "active":""}}">
-                            <div class="d-flex justify-content-center">
-                                <img src="{{asset($image->Path)}}" class="d-block" style="height: 50vh; object-fit: cover;" alt="{{$image->Path}}">
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                <button class="carousel-control-prev bg-dark" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next bg-dark" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
             </div>
 
             {{-- DETAILS --}}
-            <hr>
-            <table>
-                <tr>
-                    <td class="fw-bold py-2">Owners</td>
-                    <td><a href="/owners/{{$listing[0]->OwnerId}}" class="text-reset text-decoration-none">{{$listing[0]->Owner}}</a></td>
-                </tr>
-                
-                <tr>
-                    <td class="fw-bold py-2">Rent</td>
-                    <td>{{"$" . $listing[0]->Rent . "/pw"}}</td>
-                </tr>
-
-                <tr>
-                    <td class="fw-bold py-2">Address</td>
-                    <td>{{$listing[0]->Street . ", " . $listing[0]->City . ", " . $listing[0]->State}}</td>
-                </tr>
-
-                <tr>
-                    <td class="fw-bold py-2">Available Date</td>
-                    <td>{{$listing[0]->AvailableDate}}</td>
-                </tr>
-
-                <tr>
-                    <td class="fw-bold py-2">Conditions</td>
-                    <td>
-                        @if ($listing[0]->IsBillIncluded)
+            <div class="d-flex flex-column gap-3 mb-3 flex-md-row justify-content-between">
+                <div>
+                    <div class="fw-bold">Owner</div>
+                    <a href="{{url('users/'.$listing->UserId)}}" class="text-reset text-decoration-none">
+                        {{$listing->UserName}}
+                    </a>
+                </div>
+                <div>
+                    <div class="fw-bold">Rent</div>
+                    <div>{{"$" . $listing->Rent . "/pw"}}</div>
+                </div>
+                <div>
+                    <div class="fw-bold">Address</div>
+                    <div>{{$listing->Street . ", " . $listing->City . ", " . $listing->State}}</div>
+                </div>
+                <div>
+                    <div class="fw-bold">Available Date</div>
+                    <div>{{$listing->AvailableDate}}</div>
+                </div>
+                <div>
+                    <div class="fw-bold">Conditions</div>
+                    <div>
+                        @if ($listing->IsBillIncluded)
                             <i class="bi bi-clipboard-check"></i> Bill Included
                         @endif
-                        @if ($listing[0]->IsFurnished)
+                        @if ($listing->IsFurnished)
                             <i class="bi bi-clipboard-check"></i> Furnished
                         @endif
-                    </td>
-                </tr>
-
-                <tr>
-                    <td colspan=2>
-                    <div class="fw-bold py-2">Description</div>
-                    <div class="bg-white p-3 border rounded">{{$listing[0]->Description}}</div>
-                    </td>
-                </tr>
-            </table>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="fw-bold">Description</div>
+                <div class="bg-white p-3 border rounded">{{$listing->Description}}</div>
+            </div>
             
             {{-- DISPLAY REVIEWS --}}
             <hr>
-            @unless (count($reviews) == 0)
-                <table class="w-100">
+            @if ($reviews)
+                <div class="d-flex flex-column gap-3 mb-3">
                     @foreach ($reviews as $review)
-                        <tr class="d-flex flex-column flex-lg-row mb-3">
-                            <td class="fw-bold p-1">
-                                <a href="/owners/{{$review->UserId}}" class="text-reset text-decoration-none">
-                                    {{$review->Reviewer}}
+                        <div class="d-flex flex-column flex-lg-row">
+                            <div class="fw-bold me-3">
+                                <a href="{{url('users/'.$review->UserId)}}" class="text-reset text-decoration-none">
+                                    {{$review->UserName}}
                                 </a>
-                            </td>
-                            <td class="p-1"><x-rating :Rating="$review->Rating" /></td>
-                            <td class="p-1">{{$review->Date}}</td>
-                            <td class="p-1">{{$review->Review}}</td>
-                        </tr>
+                            </div>
+                            <div class="d-flex align-items-center me-3">
+                                <x-rating :Rating="$review->Rating" />
+                                <small class="text-body-secondary ms-2">{{ $review->Rating }}</small>
+                            </div>
+                            <div class="me-3">{{ $review->Date }}</div>
+                            <div class="flex-grow-1">{{ $review->Review }}</div>
+                        </div>
                     @endforeach
-                </table>
+                </div>
             @else
-                <div class="text-center">No Reviews Found</div>
-            @endunless
+                <div class="text-center p-1 mb-3">No Reviews Found</div>
+            @endif
             
             {{-- REVIEW INPUT --}}
-            <form method="POST" action="/listings/{{$listing[0]->Id}}" class="d-flex flex-column flex-md-row">
+            <form method="POST" action={{url("listings/$listing->ListingId")}} class="d-flex flex-column flex-md-row">
                 @csrf
                 <div class="d-flex align-items-center pe-0">
                     <img
@@ -126,9 +113,9 @@
                     <input
                         class="rounded-pill w-100 border px-2" style="height: 30px;"
                         type="text" name="message"
-                        placeholder="Add a review for {{$listing[0]->Owner}}'s listing..."
+                        placeholder="Add a review for {{$listing->UserName}}'s listing..."
                     >
-                    <div class="col"><button type="submit" class="border-0 bg-light"><i class="bi bi-send"></i></button></div>
+                    <div class="col"><button type="submit" class="border-0 bg-transparent"><i class="bi bi-send"></i></button></div>
                 </div>
             </form>
         </div>

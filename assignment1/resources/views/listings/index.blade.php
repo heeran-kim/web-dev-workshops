@@ -1,11 +1,9 @@
 <x-master title="| Home">
     <div class="container">
-        <div class="d-flex align-items-center justify-content-between">
-            <h3>
-                All Listings
-            </h3>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h3 class="m-0">All Listings</h3>
 
-            <select class="form-select mb-3" style="width: 250px;">
+            <select class="form-select-sm">
                 <option selected>Newest</option>
                 <option value="1">Highest Rating</option>
                 <option value="2">Lowest Rating</option>
@@ -14,32 +12,14 @@
             </select>
         </div>
 
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            @foreach ($listings as $listing)
-                <div class="col">
-                    <div class="card">
-                        <a href="/listings/{{$listing->Id}}" class="text-decoration-none text-reset">
-                            <img src="{{asset($listing->Image)}}" class="card-img-top" alt="{{$listing->Image}}" style="height: 200px; object-fit: cover;">
-                            
-                            <div class="card-body">
-                                <h5 class="card-title">{{"$".$listing->Rent."/pw"}}</h5>
-                                <p class="card-text">{{$listing->City}}, {{$listing->State}}</p>
-                            </div>
-                            
-                            <div class="card-footer">
-                                @unless ($listing->ReviewCount == 0)
-                                    <x-rating :Rating="$listing->AverageRating" />
-                                    <small class="text-body-secondary">
-                                        {{number_format($listing->AverageRating, 1)." (".$listing->ReviewCount.")"}}
-                                    </small>
-                                @else
-                                    <small>No Reviews Yet</small>
-                                @endunless
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            @endforeach
-        </div>
+        @if ($listings)
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach ($listings as $listing)
+                    <x-listing-card :listing="$listing"/>
+                @endforeach
+            </div>
+        @else
+            <div class="text-center">No Listings Found</div>
+        @endunless
     </div>
 </x-master>

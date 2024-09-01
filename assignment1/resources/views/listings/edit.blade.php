@@ -1,67 +1,70 @@
 <x-master title="| Edit">
-    <div class="d-flex justify-content-center">
-        <div class="bg-light p-3 border rounded shadow-sm" style="width: 500px;">
+    <div class="d-flex justify-content-center m-3">
+        <div class="bg-light p-3 border rounded shadow-sm" style="width: 800px;">
             <h3 class="text-center mt-3 p-1 text-uppercase">Edit</h3>
             <h5 class="text-center">Edit your listing and find your wonderful roommates</h5>
-            <form method="POST" action="/listings" class="row g-3">
-                @csrf
-                <div class="col-12">
-                    <label for="title" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="title" placeholder="Cozy Studio">
-                </div>
-                <div class="col-md-12">
-                  <label for="name" class="form-label">Name</label>
-                  <input type="text" class="form-control" id="name" placeholder="John Doe">
-                </div>
-                <div class="col-md-6">
-                  <label for="rent" class="form-label">Rent</label>
-                  <input type="text" class="form-control" id="rent" placeholder="Rent per week">
-                </div>
-                <div class="col-md-6">
-                  <label for="rent" class="form-label">Available Date</label>
-                  <input type="date" class="form-control" id="date">
-                </div>
-                <div class="col-12">
-                  <label for="address" class="form-label">Address</label>
-                  <input type="text" class="form-control" id="address" placeholder="1234 Main St">
-                </div>
-                <div class="col-md-6">
-                  <label for="city" class="form-label">City</label>
-                  <input type="text" class="form-control" id="city" placeholder="Sydney">
-                </div>
-                <div class="col-md-6">
-                  <label for="inputState" class="form-label">State</label>
-                  <select id="inputState" class="form-select">
-                    <option value="1">NSW</option>
-                    <option value="2">QLD</option>
-                    <option value="3">VIC</option>
-                    <option value="4">NT</option>
-                  </select>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="bill">
-                        <label class="form-check-label" for="bill">
-                            Is Bill Included
-                        </label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="furnished">
-                        <label class="form-check-label" for="furnished">
-                            Is Furnished
-                        </label>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea name="description" id="description" class="form-control" rows="5" placeholder="Enter a detailed description of the property, highlighting key features and amenities."></textarea>
-                </div>
-                <div class="col-12">
-                  <button type="submit" class="btn btn-primary">Create</button>
-                </div>
-            </form>
+            
+            <form method="POST" action={{url("listings/$listing->ListingId")}} class="row g-3">
+              @csrf
+              <div class="col-12">
+                  <label class="form-label">Title</label>
+                  <input type="text" class="form-control" name="title" value={{$listing->Title}}>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Name</label>
+                <input type="text" class="form-control" name="userName" value={{$listing->UserName}}>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Rent</label>
+                <input type="text" class="form-control" name="rent" value={{$listing->Rent}}>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Available Date</label>
+                <input type="date" class="form-control" name="availableDate" value={{$listing->AvailableDate}}>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Street</label>
+                <input type="text" class="form-control" name="street" value={{$listing->Street}}>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">City</label>
+                <input type="text" class="form-control" name="city" value={{$listing->City}}>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">State</label>
+                <select name="state" class="form-select">
+                  <option value="" disabled selected>Choose a state or territory</option>
+                  <option value="NSW">NSW</option>
+                  <option value="QLD">QLD</option>
+                  <option value="VIC">VIC</option>
+                  <option value="SA">SA</option>
+                  <option value="WA">WA</option>
+                  <option value="TAS">TAS</option>
+                  <option value="NT">NT</option>
+                  <option value="ACT">ACT</option>
+                </select>
+              </div>
+              <div class="col-6">
+                  <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="isBillIncluded">
+                      <label class="form-check-label">Is Bill Included</label>
+                  </div>
+              </div>
+              <div class="col-6">
+                  <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="isFurnished">
+                      <label class="form-check-label">Is Furnished</label>
+                  </div>
+              </div>
+              <div class="col-12">
+                  <label class="form-label">Description</label>
+                  <textarea name="description" name="description" class="form-control" rows="5">{{$listing->Description}}</textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary">Edit</button>
+              </div>
+          </form>
+
         </div>
     </div>
 </x-master>
