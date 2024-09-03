@@ -3,13 +3,17 @@
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h3 class="m-0">All Listings</h3>
 
-            <select class="form-select-sm">
-                <option selected>Newest</option>
-                <option value="1">Highest Rating</option>
-                <option value="2">Lowest Rating</option>
-                <option value="3">Highest Number of Reviews</option>
-                <option value="4">Lowest Number of Reviews</option>
-            </select>
+            <form method="GET" action={{url("/")}}>
+                <select class="form-select-sm" name="sort">
+                    <option value="date-desc" selected>Newest First</option>
+                    <option value="date-asc">Oldest First</option>
+                    <option value="rating-desc">Highest Rated</option>
+                    <option value="rating-asc">Lowest Rated</option>
+                    <option value="reviews-desc">Most Reviews</option>
+                    <option value="reviews-asc">Fewest Reviews</option>
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm">Sort</button>
+            </form>
         </div>
 
         @if ($listings)

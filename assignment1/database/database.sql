@@ -4,42 +4,42 @@ DROP TABLE IF EXISTS Images;
 DROP TABLE IF EXISTS Reviews;
 
 CREATE TABLE IF NOT EXISTS Users (
-    Id              INTEGER     PRIMARY KEY,
-    Name            VARCHAR(20) NOT NULL,
-    Email           VARCHAR(30) NOT NULL    UNIQUE,
-    Password        VARCHAR(20) NOT NULL
+    id                  INTEGER         PRIMARY KEY,
+    name                VARCHAR(20)     NOT NULL    UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS Listings (
-    Id              INTEGER     PRIMARY KEY,
-    Title           VARCHAR(20) NOT NULL,
-    Street          VARCHAR(50),
-    City            VARCHAR(50) NOT NULL,
-    State           VARCHAR(30) NOT NULL,
-    Rent            INTEGER     NOT NULL,
-    AvailableDate   DATE,
-    IsFurnished     BOOLEAN,
-    IsBillIncluded  BOOLEAN,
-    Description     TEXT,
-    UserId          INTEGER     NOT NULL    REFERENCES Users(Id)
+    id                  INTEGER     PRIMARY KEY,
+    title               VARCHAR(20)     NOT NULL,
+    street              VARCHAR(50),
+    city                VARCHAR(50)     NOT NULL,
+    state               VARCHAR(30)     NOT NULL,
+    rent                INTEGER         NOT NULL,
+    available_date      DATE,
+    is_furnished        BOOLEAN,
+    is_bill_included    BOOLEAN,
+    description         TEXT,
+    user_id             INTEGER         NOT NULL    REFERENCES Users(Id),
+    average_rating      DECIMAL(2,1),
+    review_count        INTEGER         DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS Reviews (
-    Id              INTEGER     PRIMARY KEY,
-    Rating          INTEGER     NOT NULL    CHECK(Rating IN (1, 2, 3, 4, 5)),
-    Date            DATE,
-    Review          TEXT,
-    ListingId       INTEGER     NOT NULL    REFERENCES Listings(Id),
-    UserId          INTEGER     NOT NULL    REFERENCES Users(Id)
+    id                  INTEGER         PRIMARY KEY,
+    rating              INTEGER         NOT NULL    CHECK(Rating IN (1, 2, 3, 4, 5)),
+    date                DATE,
+    review              TEXT,
+    listing_id          INTEGER         NOT NULL    REFERENCES Listings(Id),
+    user_id             INTEGER         NOT NULL    REFERENCES Users(Id)
 );
 
-INSERT INTO Users(Name, Email, Password)
+INSERT INTO Users(name)
     VALUES
-    ("Heeran",      "heerankim@gmail.com",  "password"),
-    ("Jinwoo",      "jinwookim@gmail.com",  "password"),
-    ("John Doe",    "johndoe@gmail.com",    "password");
+    ("Heeran"),
+    ("Jinwoo"),
+    ("John Doe");
 
-INSERT INTO Listings (Title, Street, City, State, Rent, AvailableDate, IsFurnished, IsBillIncluded, Description, UserId)
+INSERT INTO Listings (title, street, city, state, rent, available_date, is_furnished, is_bill_included, description, user_id)
     VALUES 
     ('Cozy Studio',
     '123 Elm Street', 'Sydney', 'NSW',
@@ -65,10 +65,10 @@ INSERT INTO Listings (Title, Street, City, State, Rent, AvailableDate, IsFurnish
     'This luxury apartment in Perth offers premium living with top-notch amenities. The apartment is fully furnished and includes all utilities, making it ideal for professionals. Located in an upscale area, it is close to fine dining, shopping, and cultural attractions. The building features a gym, pool, and 24-hour security.',
     3);
 
-INSERT INTO Reviews(Rating, Date, Review, ListingId, UserId)
-    VALUES
-    (4, '2024-08-15', 'Great location and cozy space. Highly recommend!',               1, 2),
-    (3, '2024-08-20', 'Spacious house but had some issues with the heating.',           1, 2),
-    (5, '2024-09-01', 'Absolutely loved the modern flat! Everything was perfect.',      2, 2),
-    (4, '2024-10-30', 'Beautiful view and close to the beach. Would stay again.',       2, 2),
-    (3, '2024-11-10', 'Nice loft but a bit noisy at night. Great access to downtown.',  3, 1);
+-- INSERT INTO Reviews(rating, date, review, listing_id, user_id)
+--     VALUES
+--     (4, '2024-08-15', 'Great location and cozy space. Highly recommend!',               1, 2),
+--     (3, '2024-08-20', 'Spacious house but had some issues with the heating.',           1, 2),
+--     (5, '2024-09-01', 'Absolutely loved the modern flat! Everything was perfect.',      2, 2),
+--     (4, '2024-10-30', 'Beautiful view and close to the beach. Would stay again.',       2, 2),
+--     (3, '2024-11-10', 'Nice loft but a bit noisy at night. Great access to downtown.',  3, 1);

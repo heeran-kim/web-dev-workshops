@@ -33,15 +33,13 @@
                 <div class="col-md-6">
                   <label class="form-label">State</label>
                   <select name="state" class="form-select">
-                    <option value="" disabled selected>Choose a state or territory</option>
-                    <option value="NSW">NSW</option>
-                    <option value="QLD">QLD</option>
-                    <option value="VIC">VIC</option>
-                    <option value="SA">SA</option>
-                    <option value="WA">WA</option>
-                    <option value="TAS">TAS</option>
-                    <option value="NT">NT</option>
-                    <option value="ACT">ACT</option>
+                    @php
+                      $states = ['NSW', 'QLD', 'VIC', 'SA', 'WA', 'TAS', 'NT', 'ACT'];
+                    @endphp
+                    <option disabled selected>Choose a state or territory</option>
+                    @foreach ($states as $state)
+                        <option value="{{$state}}"}}>{{$state}}</option>
+                    @endforeach
                   </select>
                 </div>
                 <div class="col-6">
