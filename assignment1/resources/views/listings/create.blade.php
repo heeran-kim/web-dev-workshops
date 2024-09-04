@@ -8,28 +8,65 @@
                 @csrf
                 <div class="col-12">
                     <label class="form-label">Title</label>
-                    <input type="text" class="form-control" name="title" placeholder="Cozy Studio">
+                    <input
+                      type="text" class="form-control" name="title" placeholder="Cozy Studio"
+                      value="{{session('formFields.title', '')}}"
+                    >
+                    @if (session('errorMessage.title'))
+                      <small class="text-danger">{{session('errorMessage.title')}}</small>
+                    @endif
                 </div>
+
                 <div class="col-12">
                   <label class="form-label">Name</label>
-                  <input type="text" class="form-control" name="userName" placeholder="John Doe">
+                  <input
+                    type="text" class="form-control" name="ownerName"
+                    placeholder="Enter a name (3-20 chars, no special symbols, numbers will be removed)"
+                    value="{{session('formFields.ownerName', session('userName', ''))}}"
+                  >
+                  @if (session('errorMessage.ownerName'))
+                    <small class="text-danger">{{session('errorMessage.ownerName')}}</small>
+                  @endif
                 </div>
+
                 <div class="col-md-6">
                   <label class="form-label">Rent</label>
-                  <input type="text" class="form-control" name="rent" placeholder="Rent per week">
+                  <input
+                    type="text" class="form-control" name="rent" placeholder="Rent per week"
+                    value="{{session('formFields.rent', '')}}"
+                  >
+                  @if (session('errorMessage.rent'))
+                    <small class="text-danger">{{session('errorMessage.rent')}}</small>
+                  @endif
                 </div>
+
                 <div class="col-md-6">
                   <label class="form-label">Available Date</label>
-                  <input type="date" class="form-control" name="availableDate">
+                  <input
+                    type="date" class="form-control" name="availableDate"
+                    value="{{session('formFields.availableDate', '')}}"
+                  >
                 </div>
+
                 <div class="col-12">
                   <label class="form-label">Street</label>
-                  <input type="text" class="form-control" name="street" placeholder="1234 Main St">
+                  <input
+                    type="text" class="form-control" name="street" placeholder="1234 Main St"
+                    value="{{session('formFields.street', '')}}"
+                  >
                 </div>
+
                 <div class="col-md-6">
                   <label class="form-label">City</label>
-                  <input type="text" class="form-control" name="city" placeholder="Sydney">
+                  <input
+                    type="text" class="form-control" name="city" placeholder="Sydney"
+                    value="{{session('formFields.city', '')}}"
+                  >
+                  @if (session('errorMessage.city'))
+                    <small class="text-danger">{{session('errorMessage.city')}}</small>
+                  @endif
                 </div>
+
                 <div class="col-md-6">
                   <label class="form-label">State</label>
                   <select name="state" class="form-select">
@@ -38,26 +75,47 @@
                     @endphp
                     <option disabled selected>Choose a state or territory</option>
                     @foreach ($states as $state)
-                        <option value="{{$state}}"}}>{{$state}}</option>
+                        <option
+                          value="{{$state}}"
+                          {{session('formFields.state') == $state ? 'selected' : ''}}
+                        >
+                          {{$state}}
+                        </option>
                     @endforeach
                   </select>
+                  @if (session('errorMessage.state'))
+                    <small class="text-danger">{{session('errorMessage.state')}}</small>
+                  @endif
                 </div>
+
                 <div class="col-6">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="isBillIncluded">
+                        <input
+                          class="form-check-input" type="checkbox" name="isBillIncluded"
+                          {{session('formFields.isBillIncluded') ? 'checked' : ''}}
+                        >
                         <label class="form-check-label">Is Bill Included</label>
                     </div>
                 </div>
+
                 <div class="col-6">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="isFurnished">
+                        <input
+                          class="form-check-input" type="checkbox" name="isFurnished"
+                          {{session('formFields.isFurnished') ? 'checked' : ''}}
+                        >
                         <label class="form-check-label">Is Furnished</label>
                     </div>
                 </div>
+
                 <div class="col-12">
                     <label class="form-label">Description</label>
-                    <textarea name="description" name="description" class="form-control" rows="5" placeholder="Enter a detailed description of the property, highlighting key features and amenities."></textarea>
+                    <textarea
+                      name="description" name="description" class="form-control" rows="5"
+                      placeholder="Enter a detailed description of the property, highlighting key features and amenities."
+                    >{{session('formFields.description', '')}}</textarea>
                 </div>
+
                 <div class="col-12">
                   <button type="submit" class="btn btn-primary">Create</button>
                 </div>

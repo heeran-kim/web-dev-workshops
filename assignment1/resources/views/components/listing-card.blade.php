@@ -12,10 +12,10 @@
             
             {{-- RATING --}}
             <div class="card-footer">
-                @if ($listing->reviewStat->averageRating)
-                    <x-rating :Rating="$listing->reviewStat->averageRating" />
+                @if ($listing->averageRating)
+                    <x-rating :Rating="$listing->averageRating" />
                     <small class="text-body-secondary">
-                        {{$listing->reviewStat->averageRating . " (" . $listing->reviewStat->reviewCount . ")"}}
+                        {{$listing->averageRating . " (" . $listing->reviewCount . ")"}}
                     </small>
                 @else
                     <small>No Reviews Found</small>

@@ -1,14 +1,21 @@
 <x-master title="| Show">
+
     <div class="container">
+        @if(session('alteredName'))
+            <div class="alert alert-info">
+                The name you entered has been changed to "{{session('alteredName')}}".
+            </div>
+        @endif
+        {{-- CARD --}}
         <div class="bg-light p-3 border rounded shadow-sm">
             {{-- TITLE/RATING/EDIT/DELETE --}}
             <div class="d-flex justify-content-between">
                 <h3>{{$listing->title}}</h3>
                 <div>
-                    @if ($listing->reviewStat->averageRating)
-                        <x-rating :Rating="$listing->reviewStat->averageRating" />
+                    @if ($listing->averageRating)
+                        <x-rating :Rating="$listing->averageRating" />
                         <small class="text-body-secondary">
-                            {{$listing->reviewStat->averageRating . " (" . $listing->reviewStat->reviewCount . ")"}}
+                            {{$listing->averageRating . " (" . $listing->reviewCount . ")"}}
                         </small>
                     @else
                         <small>No Reviews Found</small>
@@ -28,8 +35,8 @@
             <div class="d-flex flex-column gap-3 mb-3 flex-md-row justify-content-between">
                 <div>
                     <div class="fw-bold">Owner</div>
-                    <a href="{{url('users/'.$listing->userId)}}" class="text-reset text-decoration-none">
-                        {{$listing->userName}}
+                    <a href="{{url('owners/'.$listing->ownerId)}}" class="text-reset text-decoration-none">
+                        {{$listing->ownerName}}
                     </a>
                 </div>
                 <div>
@@ -65,27 +72,30 @@
             <hr>
             @if ($reviews)
                 @foreach ($reviews as $review)
-                    <div class="d-flex flex-column flex-lg-row mb-3">
+                    <div class="d-flex flex-column flex-lg-row mt-3">
                         {{-- REVIEW DETAILS --}}
                         <div class="col-lg-1 fw-bold me-3">
-                            <a href="{{url('users/'.$review->userId)}}" class="text-reset text-decoration-none">
-                                {{$review->userName}}
-                            </a>
+                            {{$review->userName}}
                         </div>
                         <div class="col-lg-1 me-3">
                             @if (isset($reviewToEdit) && $review->reviewId == $reviewToEdit->reviewId)
                                 <form method="POST" action={{url("listings/$listing->listingId/reviews/$reviewToEdit->reviewId")}}>
                                 @csrf
                                 @method('PUT')
-                                <select class="rounded-pill border px-2" style="width: 100px; height: 30px;" name="rating">
-                                    @for ($i=0; $i<=5.0; $i+=0.5)
-                                        @if ($i == $reviewToEdit->rating)
-                                            <option value={{$i}} selected>{{number_format($i,1)}}</option>
-                                        @else
-                                            <option value={{$i}}>{{number_format($i,1)}}</option>
-                                        @endif
-                                    @endfor
-                                </select>
+                                    <select
+                                        class="form-select rounded-pill"
+                                        style="width: 100px; height: 35px;"
+                                        name="rating"
+                                    >
+                                        @for ($i=1; $i<=5; $i++)
+                                            <option
+                                                value={{$i}}
+                                                {{session('editFields.rating') == $i ? 'selected' : ($i == $reviewToEdit->rating ? 'selected' : '')}}
+                                            >
+                                                {{$i}}
+                                            </option>
+                                        @endfor
+                                    </select>
                             @else
                                 <x-rating :Rating="$review->rating" />
                             @endif
@@ -96,7 +106,7 @@
                                 <input
                                     class="rounded-pill w-100 border px-2" style="height: 30px;"
                                     type="text" name="review"
-                                    value="{{$reviewToEdit->review}}"
+                                    value="{{session('editFields.review', $reviewToEdit->review)}}"
                                 >
                             @else
                                 {{$review->review}}
@@ -119,36 +129,81 @@
                             @endif
                         </div>
                     </div>
+                    @if (session('editError') && $review->reviewId == $reviewToEdit->reviewId)
+                    <div>
+                        <small class="text-danger">{{session('editError')}}</small>
+                    </div>
+                    @endif
                 @endforeach
             @else
                 <div class="text-center p-1 mb-3">No Reviews Found</div>
             @endif
             
             {{-- REVIEW INPUT --}}
-            <form method="POST" action={{url("listings/$listing->listingId/reviews")}} class="d-flex flex-column flex-md-row">
+            <form method="POST" action={{url("listings/$listing->listingId/reviews")}} class="d-flex align-items-center mt-3">
                 @csrf
-                <div class="d-flex align-items-center pe-0">
-                    <img
-                        src="{{asset('images/no-user-img.png')}}" class="rounded-circle border me-1"
-                        width="30" height="30" alt="user" style="object-fit: cover;"
-                    >
-                    <input class="rounded-pill border px-2" style="width: 100px; height: 30px;" type="text" name="userName" placeholder="Name"}}">
-                    <select class="rounded-pill border px-2" style="width: 100px; height: 30px;" name="rating">
-                        <option disabled selected>Rating</option>
-                        @for ($i=1; $i<=5; $i++)
-                            <option value={{$i}}>{{$i}}</option>
-                        @endfor
-                    </select>
-                </div>
-                <div class="flex-grow-1 d-flex aligh-items-center ps-0">
-                    <input
-                        class="rounded-pill w-100 border px-2" style="height: 30px;"
-                        type="text" name="review"
-                        placeholder="Add a review for {{$listing->userName}}'s listing..."
-                    >
-                    <div class="col"><button type="submit" class="border-0 bg-transparent"><i class="bi bi-send"></i></button></div>
+                {{-- ICON --}}
+                <img
+                    src="{{asset('images/no-user-img.png')}}"
+                    class="rounded-circle border me-1"
+                    width="30"
+                    height="30"
+                    alt="user"
+                    style="object-fit: cover;"
+                >
+
+                <div class="flex-grow-1 d-flex flex-column flex-sm-row">
+                    <div class="d-flex">
+                        {{-- USER NAME --}}
+                        <input
+                            class="form-control rounded-pill m-1" 
+                            style="width: 100px; height: 35px;" 
+                            type="text" 
+                            name="userName" 
+                            placeholder="Name"
+                            value="{{session('createFields.userName', session('userName', ''))}}"
+                        >
+
+                        {{-- RATING --}}
+                        <select
+                            class="form-select rounded-pill m-1"
+                            style="width: 100px; height: 35px;"
+                            name="rating"
+                        >
+                            <option disabled selected>Rating</option>
+                            @for ($i=1; $i<=5; $i++)
+                                <option value={{$i}} {{session('createFields.rating') == $i ? 'selected' : ''}}>
+                                    {{$i}}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
+                        
+                    <div class="flex-grow-1 d-flex align-items-center">
+                        {{-- REVIEW --}}
+                        <input
+                            class="form-control rounded-pill w-100 m-1"
+                            style="height: 35px;"
+                            type="text"
+                            name="review"
+                            placeholder="Add a review for {{$listing->ownerName}}'s listing..."
+                            value="{{session('createFields.review', '')}}"
+                        >
+                        
+                        {{-- SUBMIT BUTTON --}}
+                        <div class="col">
+                            <button type="submit" class="border-0 bg-transparent">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </form>
+            @if (session('createError'))
+            <div>
+                <small class="text-danger">{{session('createError')}}</small>
+            </div>
+            @endif
         </div>
     </div>
 </x-master>

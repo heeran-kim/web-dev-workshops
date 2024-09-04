@@ -1,9 +1,9 @@
-<x-master title="| Home">
+<x-master title="| {{$owner->ownerName}}">
     <div class="container">
-        <div class="d-flex align-items-center justify-content-between mb-3">
-            <h3 class="m-0">All Listings</h3>
+        <div class="d-flex align-items-center justify-content-md-between mb-3 flex-column flex-md-row">
+            <h3 class="m-0">{{$owner->ownerName}}'s All Listings</h3>
 
-            <form method="GET" action={{url("/")}}>
+            <form method="GET" action={{url("owners/$owner->ownerId")}}>
                 <select class="form-select-sm" name="sort">
                     <option value="date-desc" {{$sort == "date-desc" ? "selected" : ""}}>Newest First</option>
                     <option value="date-asc" {{$sort == "date-asc" ? "selected" : ""}}>Oldest First</option>
@@ -19,11 +19,11 @@
         @if ($listings)
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 @foreach ($listings as $listing)
-                    <x-listing-card :listing="$listing"/>
+                    <x-listing-card :listing="$listing" />
                 @endforeach
             </div>
         @else
-            <div class="text-center">No Listings Found</div>
+            <div class="text-center">No Listings Yet</div>
         @endunless
     </div>
 </x-master>

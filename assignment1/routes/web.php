@@ -5,107 +5,175 @@ use Illuminate\Support\Facades\Route;
 
 // CRUD
 // Private
-// Description: Get review stat of specific listing
-function _getListingReviewStat($listingId) {
+function _getAverageRating ($listingId) {
     $sql = "
         SELECT
-            ROUND(AVG(R.rating), 1) AS 'averageRating',
-            COUNT(R.rating)         AS 'reviewCount'
+            AVG(R.rating)   AS 'averageRating'
         FROM
-            Reviews                 AS R,
-            Listings                AS L
+            Reviews         AS R,
+            Listings        AS L
         WHERE
             R.listing_id = L.id AND
             L.id = ?
     ";
 
-    $listingReviewStats = DB::select($sql, array($listingId));
+    $averageRatings = DB::select($sql, array($listingId));
 
-    if (count($listingReviewStats) != 1){
+    if (count($averageRatings) != 1){
         die("Something has gone wrong, invalid query or result: $sql");
     }
 
-    $listingReviewStat = $listingReviewStats[0];
+    $averageRating = $averageRatings[0]->averageRating;
 
-    return $listingReviewStat;
+    return $averageRating;
 }
 
-// Description: Get review stat of specific user
-function _getUserReviewStat($userId) {
-    // 1. user가 listing X => null null => []
-        // 0    1.5     2
-        // 1    4.0     1 
-        // 2    null    0
-        // 3    3.0     4
-    // 2. user가 listing 가졌는데 review X => null 0 => [0]->AverageRating = null, [0]->ReviewCount = 0
-        // 0    1.5     2
-        // 1    4.0     1 
-        // 2    null    0
-        // 3    3.0     4
-    // 3. user가 listing 여러개가졌는데 일부 listing review X => null 제외 계산
-        // 0    1.5     2
-        // 1    4.0     1 
-        // 2    null    0
-        // 3    3.0     4
+function _updateAverageRating ($listingId, $averageRating) {
     $sql = "
-        SELECT
-            ROUND(AVG(Review_stat.average),1)   AS 'averageRating',
-            SUM(Review_stat.count)              AS 'reviewCount'
-        FROM
-            Listings                            AS L,
-            Users                               AS U,
-            (SELECT
-                L.id                    AS 'listing_id',
-                ROUND(AVG(R.rating),1)  AS 'average',
-                COUNT(R.rating)         AS 'count'
-            FROM
-                Reviews AS R,
-                Listings AS L
-            WHERE
-                R.listing_id = L.id
-            GROUP BY L.id)                      AS Review_stat
+        UPDATE Listings
+        SET
+            average_rating = ?
         WHERE
-            L.user_id = U.id AND
-            Review_stat.listing_id = L.id AND
-            U.id = ?
-        GROUP BY U.id
+            id = ?
     ";
 
-    $userReviewStats = DB::select($sql, array($userId));
+    DB::update($sql, array($averageRating, $listingId));
+}
+
+function _decrementReviewCount ($listingId) {
+    $sql = "
+        UPDATE Listings
+        SET
+            review_count = review_count - 1
+        WHERE
+            id = ?
+    ";
+
+    DB::update($sql, array($listingId));
+}
+
+// Validation
+// Private
+function _validateName ($name) {
+    $forbiddenChars = ['+', '-', '_', '"'];
+
+    if (strlen($name) <= 2){
+        return false;
+    }
+
+    if (strlen($name) > 20){
+        return false;
+    }
+
+    foreach ($forbiddenChars as $forbiddenChar) {
+        if (strpos($name, $forbiddenChar)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function _removeDigitsFromName ($name) {
+    $output = "";
+
+    for ($i = 0; $i < strlen($name); $i++){
+        $char = $name[$i];
+        if (!is_numeric($char)){
+            $output .= $char;
+        }
+    }
+
+    // If the name hasn't changed, return null
+    if ($output === $name) {
+        return null;
+    }
+
+    return $output;
+}
+
+function _checkDuplicateName ($name, $listingId) {
+    $reviews = getListingReviews($listingId);
     
-    if (count($userReviewStats) > 1){
-        die("Something has gone wrong, invalid query or result: $sql");
+    foreach ($reviews as $review) {
+        if ($review->userName == $name){
+            return false;
+        }
     }
 
-    if ($userReviewStats){
-        $userReviewStat = $userReviewStats[0];
-    }else {
-        $userReviewStat = [];
-    }
-
-    return $userReviewStat;
+    return true;
 }
 
-// Description: Get user id of specific user
-function _getUserId($userName) {
-    $sql = "
-        SELECT
-            U.id    AS 'userId'
-        FROM
-            Users   AS U
-        WHERE
-            U.name == ?
-    ";
+function _validateNumber ($number) {
+    if (!filter_var($number, FILTER_VALIDATE_INT)){
+        return false;
+    }
+    return true;
+}
 
-    $users = DB::select($sql, array($userName));
+function _validateReview ($review) {
+    if (strlen($review) <= 5){
+        return false;
+    }
+    return true;
+}
 
-    if (count($users) != 1) {
-        die("Something has gone wrong, invalid query or result: $sql");
+function _validateListingInput ($formFields) {
+    $errorMessage = null;
+    
+    if(!_validateName($formFields['title'])){
+        $errorMessage['title'] = 'A title must be 3-20 characters long and cannot have the following symbols: -, _, +, ".';
     }
 
-    $userId = $users[0]->userId;
+    if (!_validateName($formFields['ownerName'])){
+        $errorMessage['ownerName'] = 'A name must be 3-20 characters long after removing numbers and cannot have the following symbols: -, _, +, ".';
+    }
 
-    return $userId;
+    if (!_validateName($formFields['city'])){
+        $errorMessage['city'] = 'A city must be 3-20 characters long and cannot have the following symbols: -, _, +, ".';
+    }
+
+    if (!isset($formFields['state'])){
+        $errorMessage['state'] = 'A state must be selected.';
+    }
+
+    if (!_validateNumber($formFields['rent'])){
+        $errorMessage['rent'] = 'A rent is required and must be an integer.';
+    }
+
+    return $errorMessage;
+}
+
+function _validateCreateReviewInput ($formFields, $listingId) {
+    if (!_validateName($formFields['userName'])){
+        return 'A name must be 3-20 characters long after removing numbers and cannot have the following symbols: -, _, +, ".';
+    }
+
+    if (!_checkDuplicateName($formFields['userName'], $listingId)){
+       return 'A name must be unique.';
+    }
+
+    if (!isset($formFields['rating'])){
+        return 'A rating must be selected.';
+    }
+
+    if (!_validateReview($formFields['review'])){
+        return 'A review must have more than 5 characters.';
+    }
+
+    return null;
+}
+
+function _validateEditReviewInput ($formFields, $listingId) {
+    if (!isset($formFields['rating'])){
+        return 'A rating must be selected.';
+    }
+
+    if (!_validateReview($formFields['review'])){
+        return 'A review must have more than 5 characters.';
+    }
+
+    return null;
 }
 
 // Public
@@ -114,13 +182,15 @@ function _getUserId($userName) {
 function getListings($sort) {
     $sql = "
         SELECT
-            L.id        AS 'listingId',
-            L.title     AS 'title',
-            L.rent      AS 'rent',
-            L.city      AS 'city',
-            L.state     AS 'state'
+            L.id                AS 'listingId',
+            L.title             AS 'title',
+            L.rent              AS 'rent',
+            L.city              AS 'city',
+            L.state             AS 'state',
+            L.average_rating    AS 'averageRating',
+            L.review_count      AS 'reviewCount'
         FROM
-            Listings    AS L
+            Listings            AS L
         GROUP BY L.id
     ";
 
@@ -132,19 +202,22 @@ function getListings($sort) {
             $orderSql = "ORDER BY L.id";
             break;
         case 'rating-desc':
-            $orderSql = "ORDER BY ";
+            $orderSql = "ORDER BY L.average_rating DESC";
+            break;
+        case 'rating-asc':
+            $orderSql = "ORDER BY L.average_rating";
+            break;
+        case 'reviews-desc':
+            $orderSql = "ORDER BY L.review_count DESC";
+            break;
+        case 'reviews-asc':
+            $orderSql = "ORDER BY L.review_count";
+            break;
     }
 
     $sql = $sql . $orderSql;
 
-    // dd($sql);
-    
     $listings = DB::select($sql);
-
-    foreach ($listings as $listing){
-        $listingReviewStat = _getListingReviewStat($listing->listingId);
-        $listing->reviewStat = $listingReviewStat;
-    }
 
     return $listings;
 }
@@ -153,23 +226,25 @@ function getListings($sort) {
 function getListing($listingId) {
     $sql = "
         SELECT
-            L.id                AS 'listingId',
-            L.title             AS 'title',
-            L.user_id           AS 'userId',
-            U.name              AS 'userName',
-            L.rent              AS 'rent',
-            L.street            AS 'street',
-            L.city              AS 'city',
-            L.state             AS 'state',
-            L.available_date    AS 'availableDate',
-            L.description       AS 'description',
-            L.is_furnished      AS 'isFurnished',
-            L.is_bill_included  AS 'isBillIncluded'
+            L.id                                    AS 'listingId',
+            L.title                                 AS 'title',
+            O.id                                    AS 'ownerId',
+            O.name                                  AS 'ownerName',
+            L.rent                                  AS 'rent',
+            L.street                                AS 'street',
+            L.city                                  AS 'city',
+            L.state                                 AS 'state',
+            L.available_date                        AS 'availableDate',
+            L.description                           AS 'description',
+            L.is_furnished                          AS 'isFurnished',
+            L.is_bill_included                      AS 'isBillIncluded',
+            FORMAT(ROUND(L.average_rating, 1),1)    AS 'averageRating',
+            L.review_count                          AS 'reviewCount'
         FROM
-            Users               AS U,
-            Listings            AS L
+            Owners                                  AS O,
+            Listings                                AS L
         WHERE
-            L.user_id = U.id AND
+            L.owner_name = O.name AND
             L.id = ?
     ";
 
@@ -181,22 +256,20 @@ function getListing($listingId) {
 
     $listing = $listings[0];
 
-    $listing->reviewStat = _getListingReviewStat($listingId);
-
     return $listing;
 }
 
 // Usage: Create submit to store listing
 function createListing($formFields){
     $sql = "
-        INSERT INTO Listings (title, street, city, state, rent, available_date, is_furnished, is_bill_included, description, user_id)
+        INSERT INTO Listings (title, street, city, state, rent, available_date, is_furnished, is_bill_included, description, owner_name)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ";
     
     DB::insert($sql, array( $formFields['title'], $formFields['street'], $formFields['city'], $formFields['state'],
                             $formFields['rent'], $formFields['availableDate'],
                             $formFields['isFurnished'], $formFields['isBillIncluded'],
-                            $formFields['description'], _getUserId($formFields['userName'])));
+                            $formFields['description'], $formFields['ownerName']));
 
     $listingId = DB::getPdo()->lastInsertId();
 
@@ -239,18 +312,15 @@ function getListingReviews($listingId) {
     $sql = "
         SELECT
             R.id        AS 'reviewId',
-            U.id        AS 'userId',
-            U.name      AS 'userName',
+            R.user_name AS 'userName',
             R.rating    AS 'rating',
             R.date      AS 'date',
             R.review    AS 'review'
         FROM
             Reviews     AS R,
-            Users       AS U,
             Listings    AS L
         WHERE
             R.listing_id = L.id AND
-            R.user_id = U.id AND
             L.id = ?
         ORDER BY
             R.id
@@ -266,16 +336,14 @@ function getReview($reviewId) {
     $sql = "
         SELECT
             R.id        AS 'reviewId',
-            U.name      AS 'userName',
+            R.user_name AS 'userName',
             R.rating    AS 'rating',
             R.review    AS 'review'
         FROM
             Reviews     AS R,
-            Users       AS U,
             Listings    AS L
         WHERE
             R.listing_id = L.id AND
-            R.user_id = U.id AND
             R.id = ?
     ";
 
@@ -292,23 +360,45 @@ function getReview($reviewId) {
 
 // Usage: Create submit to store review
 function createReview($listingId, $formFields) {
+    // Insert the new review into the Reviews table
     $sql = "
-        INSERT INTO Reviews (rating, date, review, listing_id, user_id)
+        INSERT INTO Reviews (user_name, rating, date, review, listing_id)
         VALUES (?, ?, ?, ?, ?)
     ";
 
-    DB::insert($sql, array( $formFields['rating'], now()->format('Y-m-d'), $formFields['review'],
-                            $listingId, _getUserId($formFields['userName'])));
+    DB::insert($sql, array(
+        $formFields['userName'],
+        $formFields['rating'],
+        now()->format('Y-m-d'),
+        $formFields['review'],
+        $listingId)
+    );
 
+    // Get the last inserted review ID
     $reviewId = DB::getPdo()->lastInsertId();
 
     if (!$reviewId) {
         die("Error while adding review");
     }
+
+    // Update the Listings table to adjust the average rating and review count
+    $sql = "
+        UPDATE Listings
+        SET
+            average_rating  = (IFNULL(average_rating, 0) * review_count + ?)/(review_count + 1),
+            review_count    = review_count + 1
+        WHERE
+            id = ?
+    ";
+
+    DB::update($sql, array(
+        $formFields['rating'],
+        $listingId)
+    );
 }
 
 // Usage: Edit submit to update specific review
-function updateReview($reviewId, $formFields) {
+function updateReview($listingId, $reviewId, $formFields) {
     $sql = "
         UPDATE Reviews
         SET
@@ -318,90 +408,146 @@ function updateReview($reviewId, $formFields) {
     ";
     
     DB::update($sql, array($formFields['rating'], now()->format('Y-m-d'), $formFields['review'], $reviewId));
+
+    $averageRating = _getAverageRating($listingId);
+    _updateAverageRating($listingId, $averageRating);
 }
 
 // Usage: Delete specific review
-function deleteReview($reviewId) {
+function deleteReview($listingId, $reviewId) {
     $sql = "DELETE FROM Reviews WHERE id = ?";
     DB::delete($sql, array($reviewId));
+
+    $averageRating = _getAverageRating($listingId);
+    _updateAverageRating($listingId, $averageRating);
+    _decrementReviewCount($listingId);
 }
 
-// Users
-// Usage: Display all users
-function getUsers() {
+// Owners
+// Usage: Display all owners
+function getOwners($sort) {
     $sql = "
         SELECT
-            U.id        AS 'userId',
-            U.name      AS 'userName',
-            COUNT(L.id) AS 'listingCount'
+            O.id                                        AS 'ownerId',
+            O.name                                      AS 'ownerName',
+            COUNT(L.id)                                 AS 'listingCount',
+            CAST(ROUND(AVG(L.average_rating),1) AS DECIMAL(1,1))    AS 'averageRating',
+            SUM(L.review_count)                         AS 'reviewCount'
         FROM
-            Users       AS U,
-            Listings    AS L
+            Owners                                      AS O,
+            Listings                                    AS L
         WHERE
-            L.user_id = U.id
-        GROUP BY U.id
+            L.owner_name = O.name
+        GROUP BY O.id
     ";
 
-    $users = DB::select($sql);
-
-    foreach ($users as $user){
-        $userReviewStat = _getUserReviewStat($user->userId);
-        $user->reviewStat = $userReviewStat;
+    switch ($sort){
+        case 'date-desc':
+            $orderSql = "ORDER BY O.id DESC";
+            break;
+        case 'date-asc':
+            $orderSql = "ORDER BY O.id";
+            break;
+        case 'rating-desc':
+            $orderSql = "ORDER BY averageRating DESC";
+            break;
+        case 'rating-asc':
+            $orderSql = "ORDER BY averageRating";
+            break;
+        case 'reviews-desc':
+            $orderSql = "ORDER BY reviewCount DESC";
+            break;
+        case 'reviews-asc':
+            $orderSql = "ORDER BY reviewCount";
+            break;
     }
 
-    return $users;
+    $sql = $sql . $orderSql;
+
+    $owners = DB::select($sql);
+
+    return $owners;
 }
 
-// Usage: Display all listings of specific user
-function getUserListings($userId) {
+// Usage: Display all listings of specific owner
+function getOwnerListings($ownerId, $sort) {
     $sql = "
         SELECT
-            L.id        AS 'listingId',
-            L.title     AS 'title',
-            L.rent      AS 'rent',
-            L.city      AS 'city',
-            L.state     AS 'state'
+            L.id                        AS 'listingId',
+            L.title                     AS 'title',
+            L.rent                      AS 'rent',
+            L.city                      AS 'city',
+            L.state                     AS 'state',
+            FORMAT(L.average_rating,1)  AS 'averageRating',
+            L.review_count              AS 'reviewCount'
         FROM
-            Listings    AS L,
-            Users       AS U
+            Listings                    AS L,
+            Owners                      AS O
         WHERE
-            L.user_id = U.id AND
-            U.id = ?
+            L.owner_name = O.name AND
+            O.id = ?
         GROUP BY L.id
-        ORDER BY L.id DESC
     ";
-    
-    $listings = DB::select($sql, array($userId));
 
-    foreach ($listings as $listing){
-        $listingReviewStat = _getListingReviewStat($listing->listingId);
-        $listing->reviewStat = $listingReviewStat;
+    switch ($sort){
+        case 'date-desc':
+            $orderSql = "ORDER BY L.id DESC";
+            break;
+        case 'date-asc':
+            $orderSql = "ORDER BY L.id";
+            break;
+        case 'rating-desc':
+            $orderSql = "ORDER BY L.average_rating DESC";
+            break;
+        case 'rating-asc':
+            $orderSql = "ORDER BY L.average_rating";
+            break;
+        case 'reviews-desc':
+            $orderSql = "ORDER BY L.review_count DESC";
+            break;
+        case 'reviews-asc':
+            $orderSql = "ORDER BY L.review_count";
+            break;
     }
+
+    $sql = $sql . $orderSql;
+    
+    $listings = DB::select($sql, array($ownerId));
+    dd($listings);
 
     return $listings;
 }
 
-// Usage: Display all listings of specific user
-function getUser($userId) {
+// Usage: Display all listings of specific owner
+function getOwner($ownerId) {
     $sql = "
         SELECT
-            U.id    AS 'userId',
-            U.name  AS 'userName'
+            O.id    AS 'ownerId',
+            O.name  AS 'ownerName'
         FROM
-            Users   AS U
+            Owners  AS O
         WHERE
-            U.id = ?
+            O.id = ?
     ";
 
-    $users = DB::select($sql, array($userId));
+    $owners = DB::select($sql, array($ownerId));
 
-    if (count($users) != 1){
+    if (count($owners) != 1){
         die("Something has gone wrong, invalid query or result: $sql");
     }
     
-    $user = $users[0];
+    $owner = $owners[0];
     
-    return $user;
+    return $owner;
+}
+
+function createOwner($ownerName) {
+    $sql = "
+        INSERT OR IGNORE INTO Owners (name)
+        VALUES (?)
+    ";
+
+    DB::update($sql, array($ownerName));
 }
 
 
@@ -411,7 +557,7 @@ function getUser($userId) {
 Route::get('/', function () {
     $sort = request('sort') ?? 'date-desc';
     $listings = getListings($sort);
-    return view('listings.index')->with('listings', $listings);
+    return view('listings.index')->with('listings', $listings)->with('sort', $sort);
 });
 
 // Show create form
@@ -421,14 +567,30 @@ Route::get('listings/create', function () {
 
 // Create submit to store listing
 Route::post('listings', function () {
+    // input
     $formFields = request()->all();
-    // check
     $formFields['isFurnished'] = request()->has('isFurnished');
     $formFields['isBillIncluded'] = request()->has('isBillIncluded');
 
+    // Sanitize the owner's name by removing any digits.
+    $alteredName = _removeDigitsFromName($formFields['ownerName']);
+    if ($alteredName){
+        $formFields['ownerName'] = $alteredName;
+    }
+    
+    // input validation
+    $errorMessage = _validateListingInput($formFields);
+    if ($errorMessage) {
+        return back()->with("errorMessage", $errorMessage)->with("formFields", $formFields);
+    }
+
+    // add user if don't exist
+    createOwner($formFields['ownerName']);
+
+    // create listing
     $listingId = createListing($formFields);
 
-    return redirect(url("listings/$listingId"));
+    return redirect(url("listings/$listingId"))->with("alteredName", $alteredName);
 });
 
 // Show listing edit form
@@ -439,14 +601,27 @@ Route::get('listings/{listingId}/edit', function ($listingId) {
 
 // Edit submit to update specific listing
 Route::put('listings/{listingId}', function ($listingId) {
+    // input
     $formFields = request()->all();
-    // check
     $formFields['isFurnished'] = request()->has('isFurnished');
     $formFields['isBillIncluded'] = request()->has('isBillIncluded');
 
+    // Sanitize the owner's name by removing any digits.
+    $alteredName = _removeDigitsFromName($formFields['ownerName']);
+    if ($alteredName){
+        $formFields['ownerName'] = $alteredName;
+    }
+    
+    // input validation
+    $errorMessage = _validateListingInput($formFields);
+    if ($errorMessage) {
+        return back()->with("errorMessage", $errorMessage)->with("formFields", $formFields);
+    }
+
+    // update listing
     updateListing($listingId, $formFields);
 
-    return redirect(url("listings/$listingId"));
+    return redirect(url("listings/$listingId"))->with("alteredName", $alteredName);
 });
 
 // Delete specific listing
@@ -464,10 +639,25 @@ Route::get('listings/{listingId}', function ($listingId) {
 
 // Create submit to store review
 Route::post('listings/{listingId}/reviews', function ($listingId) {
-    $formFields = request()->all();
-    createReview($listingId, $formFields);
+    $createFields = request()->all();
 
-    return redirect(url("listings/$listingId"));
+    // Sanitize the user's name by removing any digits.
+    $alteredName = _removeDigitsFromName($createFields['userName']);
+    if ($alteredName){
+        $createFields['userName'] = $alteredName;
+    }
+    
+    // input validation
+    $createError = _validateCreateReviewInput($createFields, $listingId);
+    if ($createError) {
+        return back()->with("createError", $createError)->with("createFields", $createFields);
+    }
+
+    createReview($listingId, $createFields);
+
+    session(['userName' => $createFields['userName']]);
+
+    return redirect(url("listings/$listingId"))->with("alteredName", $alteredName);
 });
 
 // Show review edit form
@@ -480,27 +670,37 @@ Route::get('listings/{listingId}/reviews/{reviewId}/edit', function ($listingId,
 
 // Edit submit to update specific review
 Route::put('listings/{listingId}/reviews/{reviewId}', function ($listingId, $reviewId) {
-    $formFields = request()->all();
-    updateReview($reviewId, $formFields);
+    $editFields = request()->all();
+    
+    // input validation
+    $editError = _validateEditReviewInput($editFields, $listingId);
+    if ($editError) {
+        return back()->with("editError", $editError)->with("editFields", $editFields);
+    }
+    
+    updateReview($listingId, $reviewId, $editFields);
+    
     return redirect(url("listings/$listingId"));
 });
 
 // Delete specific review
 Route::delete('listings/{listingId}/reviews/{reviewId}', function ($listingId, $reviewId) {
-    deleteReview($reviewId);
+    deleteReview($listingId, $reviewId);
     return redirect(url("listings/$listingId"));
 });
 
-// Users
-// Display all users
-Route::get('users', function() {
-    $users = getUsers();
-    return view('users.index')->with('users', $users);
+// Owners
+// Display all owners
+Route::get('owners', function() {
+    $sort = request('sort') ?? 'date-desc';
+    $owners = getOwners($sort);
+    return view('owners.index')->with('owners', $owners)->with('sort', $sort);
 });
 
-// display all listings of specific user
-Route::get('users/{userId}', function ($userId) {
-    $user = getUser($userId);
-    $listings = getUserListings($userId);
-    return view('users.show')->with('user', $user)->with('listings', $listings);
+// display all listings of specific owner
+Route::get('owners/{ownerId}', function ($ownerId) {
+    $owner = getOwner($ownerId);
+    $sort = request('sort') ?? 'date-desc';
+    $listings = getOwnerListings($ownerId, $sort);
+    return view('owners.show')->with('owner', $owner)->with('listings', $listings)->with('sort', $sort);
 });

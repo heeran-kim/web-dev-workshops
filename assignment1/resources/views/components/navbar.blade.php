@@ -12,7 +12,7 @@
             {{-- MENUS --}}
             <div>
                 <a href={{url("/")}}><button type="button" class="btn btn-outline-primary me-2">Listings</button></a>
-                <a href={{url("users")}}><button type="button" class="btn btn-outline-primary">Owners</button></a>
+                <a href={{url("owners")}}><button type="button" class="btn btn-outline-primary">Owners</button></a>
             </div>
     
             {{-- CREATE --}}
