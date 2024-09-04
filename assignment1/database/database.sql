@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS Reviews (
     id                  INTEGER         PRIMARY KEY,
     user_name           VARCHAR(20)     NOT NULL,
     rating              INTEGER         NOT NULL    CHECK(Rating IN (1, 2, 3, 4, 5)),
-    date                DATE,
+    date                DATETIME,
     review              TEXT,
     listing_id          INTEGER         NOT NULL    REFERENCES Listings(Id)
 );

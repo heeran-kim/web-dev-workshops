@@ -1,10 +1,11 @@
-@props(['Rating'])
+@props(['rating'])
 
+<!-- Component to display a star rating out of 5, including half stars -->
 <small class="text-body-secondary">
     @for ($i=0; $i<5; $i++)
-        @if ($i<floor($Rating))
+        @if ($i<floor($rating))
             <i class="bi bi-star-fill"></i>
-        @elseif ($i < ceil($Rating) && $Rating - floor($Rating) >= 0.5)
+        @elseif ($i < ceil($rating) && $rating - floor($rating) >= 0.5)
             <i class="bi bi-star-half"></i>
         @else
             <i class="bi bi-star"></i>
