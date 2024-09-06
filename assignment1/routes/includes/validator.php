@@ -52,18 +52,16 @@ function _checkDuplicateName ($name, $listingId) {
 }
 
 /*
- * Validates that a review has more than 10 characters.
+ * Validates that a review has at least 3 words.
  * @usage   Used when validating review input during review creation and editing.
  * @return  bool Returns true if the review is valid, otherwise false.
  */
-function _validateReview ($review) {
-    if (strlen($review) <= 10){
+function _validateReviewText ($reviewText) {
+    if (str_word_count($reviewText) < 3) {
         return false;
     }
     return true;
 }
-
-
 
 
 /*
@@ -131,15 +129,15 @@ function validateCreateReviewInput ($formFields, $listingId) {
     }
 
     if (!_checkDuplicateName($formFields['userName'], $listingId)){
-       return 'A name must be unique.';
+       return 'User (with the same name) cannot post multiple reviews for the same item.';
     }
 
     if (!isset($formFields['rating'])){
         return 'A rating must be selected.';
     }
 
-    if (!_validateReview($formFields['review'])){
-        return 'A review must have more than 5 characters.';
+    if (!_validateReviewText($formFields['reviewText'])){
+        return 'A review text must have a minimum of 3 words.';
     }
 
     return null;
@@ -155,8 +153,8 @@ function validateEditReviewInput ($formFields, $listingId) {
         return 'A rating must be selected.';
     }
 
-    if (!_validateReview($formFields['review'])){
-        return 'A review must have more than 5 characters.';
+    if (!_validateReviewText($formFields['reviewText'])){
+        return 'A review text must have a minimum of 3 words.';
     }
 
     return null;

@@ -1,11 +1,11 @@
-@props(['listing'])
+@props(['action', 'listing'])
 
 <!-- Component to display an individual listing card with title, rent, brief address(city, state), and average rating -->
 <div class="col">
     <div class="card">
         <!-- Link to the specific listing's page -->
         <a
-            href="{{url("listings/$listing->listingId")}}"
+            href="{{url($action)}}"
             class="text-decoration-none text-reset"
         >
             <div class="card-body">

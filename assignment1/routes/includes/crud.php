@@ -1,15 +1,28 @@
 <?php
-
 use Illuminate\Support\Facades\DB;
 
-// 2. CRUD
-// 2.1. Private functions handle database interactions for ratings and reviews.
-/*
- * Recalculates the average rating of a listing after reviews are updated or deleted.
- * @usage   Used in `updateReview` and `deleteReview` to keep the average rating up-to-date.
- * @return  float Returns the calculated average rating for the listing.
+/**
+ * This file handles all CRUD (Create, Read, Update, Delete) operations for Listings, Reviews, and Owners in the EasyStay app.
+ * - Listings: Full CRUD operations, including sorting by various criteria such as date, rating, review count and rent.
+ * - Reviews: Full CRUD operations, with automatic recalculation of average ratings and review counts when reviews are added, edited, or deleted.
+ * - Owners: Create and Read operations only, including sorting by listing count, average rating, review count and listing count.
+ * 
+ * The main focus of this file is the interaction with the database, handling data retrieval, insertion, updates, and deletion.
+ * All public functions allow the app to dynamically manage and display Listings, Reviews, and Owners based on user input.
  */
-function _getAverageRating ($listingId) {
+
+// Private functions for managing ratings and reviews.
+#region
+
+/**
+ * Updates the average rating of a listing after reviews are modified.
+ * 
+ * @usage   Used to recalculate and update the average rating of a listing after reviews are added, updated, or deleted.
+ * @param   int     $listingId      The ID of the listing to recalculate and update.
+ * @return  void
+ */
+function _updateAverageRating ($listingId) {
+    // Recalculate the average rating based on the reviews for the listing.
     $sql = "
         SELECT
             AVG(R.rating)   AS averageRating
@@ -28,17 +41,10 @@ function _getAverageRating ($listingId) {
         die("Something has gone wrong, invalid query or result: $sql");
     }
 
-    // Return the calculated average rating.
+    // Get the recalculated average rating.
     $averageRating = $averageRatings[0]->averageRating;
-    return $averageRating;
-}
 
-/*
- * Updates the average rating of a listing in the database.
- * @usage   Used after recalculating the average rating with `_getAverageRating` to persist the new rating in the Listings table.
- * @return  void
- */
-function _updateAverageRating ($listingId, $averageRating) {
+    // Update the Listings table with the new average rating.
     $sql = "
         UPDATE Listings
         SET
@@ -50,29 +56,34 @@ function _updateAverageRating ($listingId, $averageRating) {
     DB::update($sql, array($averageRating, $listingId));
 }
 
-/*
- * Decreases the review count of a listing by 1.
- * @usage   Used when a review is deleted to update the review count of the listing.
- * @return  void
+/**
+ * Updates the review count of a listing.
+ * @usage   Used when a review is created or deleted to update the review count of the listing.
+ * @param   int     $listingId      The ID of the listing to update.
+ * @param   int     $number         The number to adjust the count (+1 for adding a review, -1 for deleting a review).
  */
-function _decrementReviewCount ($listingId) {
+function _updateReviewCount ($listingId, $number) {
     $sql = "
         UPDATE Listings
         SET
-            review_count = review_count - 1
+            review_count = review_count + ?
         WHERE
             id = ?
     ";
 
-    DB::update($sql, array($listingId));
+    DB::update($sql, array($number, $listingId));
 }
+#endregion
 
-// 2.2. Public functions that handle CRUD operations.
-// 2.2.1. Public functions that handle listings.
-/*
- * Fetches all listings, optionally sorted by a specified criterion.
- * @usage   Used to display all listings on the main listings page, allowing sorting by date, rating, or review count.
- * @return  array Returns an array of listings.
+// Public functions that handle CRUD operations.
+// Listing-related functions
+#region
+/**
+ * Retrieves all listings from the database, optionally sorted by a given criterion.
+ * 
+ * @usage   Used to display all listings on the main listings page, allowing sorting by date, rating, review count or rent.
+ * @param   string  $sort   Sorting criteria (e.g., by date, rating, review count or rent).
+ * @return  array   Returns an array of listings.
  */
 function getListings($sort) {
     $sql = "
@@ -89,6 +100,7 @@ function getListings($sort) {
         GROUP BY L.id
     ";
 
+    // Add sorting based on the selected criterion.
     switch ($sort){
         case 'date-desc':
             $orderSql = "ORDER BY L.id DESC";
@@ -108,6 +120,12 @@ function getListings($sort) {
         case 'reviews-asc':
             $orderSql = "ORDER BY L.review_count";
             break;
+        case 'rent-desc':
+            $orderSql = "ORDER BY L.rent DESC";
+            break;
+        case 'rent-asc':
+            $orderSql = "ORDER BY L.rent";
+            break;
     }
 
     $sql = $sql . $orderSql;
@@ -117,10 +135,12 @@ function getListings($sort) {
     return $listings;
 }
 
-/*
- * Fetches a specific listing by its ID.
+/**
+ * Retrieves a specific listing by its ID.
+ * 
  * @usage   Used to display a specific listing or load the listing edit form.
- * @return  object Returns the listing object with detailed information.
+ * @param   int     $listingId  The ID of the listing to retrieve.
+ * @return  object  Returns the listing object with detailed information.
  */
 function getListing($listingId) {
     $sql = "
@@ -158,10 +178,12 @@ function getListing($listingId) {
     return $listing;
 }
 
-/*
+/**
  * Creates a new listing in the database.
+ * 
  * @usage   Used when a new listing is submitted via the listing creation form.
- * @return  int Returns the ID of the newly created listing.
+ * @param   array   $formFields     The data submitted from the form.
+ * @return  int     Returns the ID of the newly created listing.
  */
 function createListing($formFields){
     $sql = "
@@ -183,10 +205,12 @@ function createListing($formFields){
     return $listingId;
 }
 
-/*
+/**
  * Updates an existing listing in the database.
+ * 
  * @usage   Used when editing a listing via the listing edit form.
- * @return  void
+ * @param   int     $listingId      The ID of the listing to update.
+ * @param   array   $formFields     The updated data from the form.
  */
 function updateListing($listingId, $formFields) {
     $sql = "
@@ -194,20 +218,21 @@ function updateListing($listingId, $formFields) {
         SET
             title = ?, street = ?, city = ?, state = ?,
             rent = ?, available_date = ?, is_furnished = ?, is_bill_included = ?,
-            description = ?
+            description = ?, owner_name = ?
         WHERE
             id = ?
     ";
     
     DB::update($sql, array( $formFields['title'], $formFields['street'], $formFields['city'], $formFields['state'],
                             $formFields['rent'], $formFields['availableDate'], $formFields['isFurnished'], $formFields['isBillIncluded'],
-                            $formFields['description'], $listingId));
+                            $formFields['description'], $formFields['ownerName'], $listingId));
 }
 
-/*
+/**
  * Deletes a specific listing and its associated reviews.
+ * 
  * @usage   Used when deleting a listing and cleaning up associated data.
- * @return  void
+ * @param   int     $lisingId   The ID of the listing to delete.
  */
 function deleteListing($listingId) {
     $sql = "DELETE FROM Reviews WHERE listing_id = ?";
@@ -216,29 +241,32 @@ function deleteListing($listingId) {
     $sql = "DELETE FROM Listings WHERE id = ?";
     DB::delete($sql, array($listingId));
 }
+#endregion
 
-// 2.2.2. Public functions that handle reviews.
-/*
- * Fetches all reviews for a specific listing.
+// Review-related functions
+#region
+/**
+ * Retrieves all reviews for a specific listing.
  * @usage   Used to display all reviews for a listing.
- * @return  array Returns an array of reviews.
+ * @param   int     $listingId      The ID of the listing to retrieve reviews for.
+ * @return  array   Returns an array of reviews.
  */
 function getListingReviews($listingId) {
     $sql = "
         SELECT
-            R.id        AS reviewId,
-            R.user_name AS userName,
-            R.rating    AS rating,
-            R.date      AS date,
-            R.review    AS review
+            R.id            AS reviewId,
+            R.user_name     AS userName,
+            R.rating        AS rating,
+            R.created_at    AS date,
+            R.review_text   AS reviewText
         FROM
-            Reviews     AS R,
-            Listings    AS L
+            Reviews         AS R,
+            Listings        AS L
         WHERE
             R.listing_id = L.id AND
             L.id = ?
         ORDER BY
-            R.id
+            R.created_at
     ";
 
     $listingReviews = DB::select($sql, array($listingId));
@@ -246,21 +274,23 @@ function getListingReviews($listingId) {
     return $listingReviews;
 }
 
-/*
- * Fetches a specific review by its ID.
- * @usage   Used to load the review edit form.
- * @return  object Returns the review object.
+/**
+ * Retrieves a specific review by its ID.
+ * @usage   Used to load the review edit form. 
+ *          Also used in fake review detection to access reviewer's name.
+ * @param   int     $reviewId       The ID of the review to retrieve.
+ * @return  object  Returns the review object with detailed information.
  */
 function getReview($reviewId) {
     $sql = "
         SELECT
-            R.id        AS reviewId,
-            R.user_name AS userName,
-            R.rating    AS rating,
-            R.review    AS review
+            R.id            AS reviewId,
+            R.user_name     AS userName,
+            R.rating        AS rating,
+            R.review_text   AS reviewText
         FROM
-            Reviews     AS R,
-            Listings    AS L
+            Reviews         AS R,
+            Listings        AS L
         WHERE
             R.listing_id = L.id AND
             R.id = ?
@@ -277,15 +307,17 @@ function getReview($reviewId) {
     return $review;
 }
 
-/*
+/**
  * Creates a new review for a listing in the database.
  * @usage   Used when a new review is submitted via the review creation form.
- * @return  void
+ * @param   int     $listingId      The ID of the listing the review belongs to
+ *                                  to update average rating and review count.
+ * @param   array   $formFields     The data from the review creating form.
  */
 function createReview($listingId, $formFields) {
     // Insert the new review into the Reviews table
     $sql = "
-        INSERT INTO Reviews (user_name, rating, date, review, listing_id)
+        INSERT INTO Reviews (user_name, rating, created_at, review_text, listing_id)
         VALUES (?, ?, ?, ?, ?)
     ";
 
@@ -293,7 +325,7 @@ function createReview($listingId, $formFields) {
         $formFields['userName'],
         $formFields['rating'],
         now(),
-        $formFields['review'],
+        $formFields['reviewText'],
         $listingId)
     );
 
@@ -304,62 +336,61 @@ function createReview($listingId, $formFields) {
         die("Error while adding review");
     }
 
-    // Update the Listings table to adjust the average rating and review count
-    $sql = "
-        UPDATE Listings
-        SET
-            average_rating  = (IFNULL(average_rating, 0) * review_count + ?)/(review_count + 1.0),
-            review_count    = review_count + 1
-        WHERE
-            id = ?
-    ";
-
-    DB::update($sql, array(
-        $formFields['rating'],
-        $listingId)
-    );
+    // Call function to recalculate and update the average rating and review count
+    _updateAverageRating($listingId);
+    _updateReviewCount($listingId, 1);  // Increase review count by 1
 }
 
-/*
+/**
  * Updates an existing review in the database.
  * @usage   Used when editing a review via the review edit form.
- * @return  void
+ * @param   int     $listingId      The ID of the listing the review belongs to
+ *                                  to update average rating.
+ * @param   int     $reviewId       The ID of the review to update.
+ * @param   array   $formFields     The updated data from the review edit form.
  */
 function updateReview($listingId, $reviewId, $formFields) {
     $sql = "
         UPDATE Reviews
         SET
-            rating = ?, date = ?, review = ?
+            rating = ?, created_at = ?, review_text = ?
         WHERE
             id = ?
     ";
     
-    DB::update($sql, array($formFields['rating'], now()->format('Y-m-d'), $formFields['review'], $reviewId));
+    DB::update($sql, array($formFields['rating'], now(), $formFields['reviewText'], $reviewId));
 
-    // After updating a review, recalculate the average rating
-    $averageRating = _getAverageRating($listingId);
-    _updateAverageRating($listingId, $averageRating);
+    // Call function to recalculate and update the average rating
+    _updateAverageRating($listingId);
 }
 
-/*
+/**
  * Deletes a specific review from the database.
  * @usage   Used when deleting a review.
- * @return  void
+ * @param   int     $listingId      The ID of the listing the review belongs to
+ *                                  to update average rating and review count.
+ * @param   int     $reviewId       The ID of the review to delete.
  */
 function deleteReview($listingId, $reviewId) {
+    // Delete the review
     $sql = "DELETE FROM Reviews WHERE id = ?";
     DB::delete($sql, array($reviewId));
 
-    $averageRating = _getAverageRating($listingId);
-    _updateAverageRating($listingId, $averageRating);
-    _decrementReviewCount($listingId);
+    // Call function to recalculate and update the average rating
+    _updateAverageRating($listingId);
+    _updateReviewCount($listingId, -1); // Decrease review count by 1
 }
+#endregion
 
-// 2.2.3. Public functions that handle owners.
-/*
- * Fetches all owners, optionally sorted by a specified criterion.
- * @usage   Used to display all owners on the owners page, allowing sorting by listing count or rating.
- * @return  array Returns an array of owners.
+// Owner-related functions
+#region
+/**
+ * Retrieves all owners,  optionally sorted by a given criterion.
+ * 
+ * @usage   Used to display all owners on the owners page,
+ *          allowing sorting by date, rating, review count or listing count.
+ * @param   string  $sort   Sorting criteria by date, rating, review count or listing count).
+ * @return  array   Returns an array of owners.
  */
 function getOwners($sort) {
     $sql = "
@@ -377,6 +408,7 @@ function getOwners($sort) {
         GROUP BY O.id
     ";
 
+    // Add sorting based on the selected criterion.
     switch ($sort){
         case 'date-desc':
             $orderSql = "ORDER BY O.id DESC";
@@ -396,6 +428,12 @@ function getOwners($sort) {
         case 'reviews-asc':
             $orderSql = "ORDER BY reviewCount";
             break;
+        case 'listing-desc':
+            $orderSql = "ORDER BY listingCount DESC";
+            break;
+        case 'listing-asc':
+            $orderSql = "ORDER BY listingCount";
+            break;
     }
 
     $sql = $sql . $orderSql;
@@ -405,10 +443,14 @@ function getOwners($sort) {
     return $owners;
 }
 
-/*
- * Fetches all listings for a specific owner.
- * @usage   Used to display all listings owned by a specific owner, optionally sorted by a specified criterion.
- * @return  array Returns an array of listings for the owner.
+/**
+ * Retrieves all listings associated with a specific owner.
+ * 
+ * @usage   Used to display all listings owned by a specific owner,
+ *          optionally sorted by a specified criterion.
+ * @param   int     $ownerId    The ID of the owner.
+ * @param   string  $sort       Sorting criteria by date, rating, review cont or rent.
+ * @return  array Returns an array of listings belonging to the owner.
  */
 function getOwnerListings($ownerId, $sort) {
     $sql = "
@@ -419,7 +461,7 @@ function getOwnerListings($ownerId, $sort) {
             L.city              AS city,
             L.state             AS state,
             L.average_rating    AS averageRating,
-            L.review_count      AS reviewCount'
+            L.review_count      AS reviewCount
         FROM
             Listings            AS L,
             Owners              AS O
@@ -429,6 +471,7 @@ function getOwnerListings($ownerId, $sort) {
         GROUP BY L.id
     ";
 
+    // Add sorting based on the selected criterion.
     switch ($sort){
         case 'date-desc':
             $orderSql = "ORDER BY L.id DESC";
@@ -448,6 +491,12 @@ function getOwnerListings($ownerId, $sort) {
         case 'reviews-asc':
             $orderSql = "ORDER BY L.review_count";
             break;
+        case 'rent-desc':
+            $orderSql = "ORDER BY L.rent DESC";
+            break;
+        case 'rent-asc':
+            $orderSql = "ORDER BY L.rent";
+            break;
     }
 
     $sql = $sql . $orderSql;
@@ -457,10 +506,12 @@ function getOwnerListings($ownerId, $sort) {
     return $listings;
 }
 
-/*
- * Fetches a specific owner's information by their ID.
+/**
+ * Retrieves a specific owner's information by their ID.
+ * 
  * @usage   Used to display the owner's information on the website.
- * @return  object Returns the owner object containing the owner's name.
+ * @param   int     $ownerId    The ID of the owner to retrieve.
+ * @return  object  Returns the owner's details (owner's name).
  */
 function getOwner($ownerId) {
     $sql = "
@@ -484,10 +535,11 @@ function getOwner($ownerId) {
     return $owner;
 }
 
-/*
+/**
  * Creates a new owner in the database.
+ * 
  * @usage   Used when creating a new owner, typically when a new listing is created.
- * @return  void
+ * @param   string  @ownerName The name of the owner to add.
  */
 function createOwner($ownerName) {
     $sql = "
@@ -497,4 +549,5 @@ function createOwner($ownerName) {
 
     DB::update($sql, array($ownerName));
 }
+#endregion
 ?>

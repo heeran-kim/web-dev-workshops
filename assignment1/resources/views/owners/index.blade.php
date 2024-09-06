@@ -2,7 +2,7 @@
     <div class="container">
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h3 class="m-0">All Owners</h3>
-            <x-sort-selector
+            <x-owner-sort
                 action="owners"
                 :sort="$sort"
             />

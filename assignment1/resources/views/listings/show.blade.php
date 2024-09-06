@@ -14,9 +14,9 @@
 
         <div class="bg-light p-3 border rounded shadow-sm">
             
-            <div class="d-flex justify-content-between">
-                <h3>{{$listing->title}}</h3>
-                <div>
+            <div class="d-flex align-items-center justify-content-sm-between flex-column flex-sm-row">
+                <h3 class="w-100 d-flex justify-content-start mb-3">{{$listing->title}}</h3>
+                <div class="w-100 d-flex justify-content-end mb-3">
                     @if ($listing->averageRating)
                         <x-rating :rating="$listing->averageRating" />
                         <small class="text-body-secondary">
@@ -28,9 +28,16 @@
                     
                     <a href="{{url("listings/$listing->listingId/edit")}}" class="text-reset"><i class="bi bi-pencil"></i></a>
                     
-                    <form method="POST" action="{{url("listings/$listing->listingId")}}" class="d-inline">
+                    <form
+                        method="POST"
+                        action="{{url("listings/$listing->listingId")}}"
+                        class="d-inline"
+                    >
                         @csrf
                         @method('DELETE')
+                        @if (isset($ownerId))
+                            <input type="hidden" name="ownerId" value="{{$ownerId}}">
+                        @endif
                         <button type="submit" class="border-0 bg-transparent p-0"><i class="bi bi-trash3"></i></button>
                     </form>
                 </div>
@@ -102,16 +109,16 @@
                                 <x-rating :rating="$review->rating" />
                             @endif
                         </div>
-                        <div class="col-lg-1 me-3">{{$review->date}}</div>
+                        <div class="col-lg-1 me-3">{{date('Y-m-d', strtotime($review->date))}}</div>
                         <div class="col-lg-8 me-3">
                             @if (isset($reviewToEdit) && $review->reviewId == $reviewToEdit->reviewId)
                                 <input
                                     class="rounded-pill w-100 border px-2" style="height: 30px;"
-                                    type="text" name="review"
-                                    value="{{session('editFields.review', $reviewToEdit->review)}}"
+                                    type="text" name="reviewText"
+                                    value="{{session('editFields.reviewText', $reviewToEdit->reviewText)}}"
                                 >
                             @else
-                                {{$review->review}}
+                                {{$review->reviewText}}
                             @endif
                         </div>
 
@@ -141,19 +148,24 @@
             @endif
             
             {{-- REVIEW INPUT --}}
-            <form method="POST" action="{{url("listings/$listing->listingId/reviews")}}" class="d-flex align-items-center mt-3">
+            <form
+                method="POST"
+                action="{{url("listings/$listing->listingId/reviews")}}"
+                class="d-flex align-items-center mt-3"
+            >
                 @csrf
-                <img
-                    src="{{asset('images/no-user-img.png')}}"
-                    class="rounded-circle border me-1"
-                    width="30"
-                    height="30"
-                    alt="user"
-                    style="object-fit: cover;"
-                >
 
                 <div class="flex-grow-1 d-flex flex-column flex-sm-row">
-                    <div class="d-flex">
+                    <div class="d-flex align-items-center">
+                        <img
+                            src="{{asset('images/no-user-img.png')}}"
+                            class="rounded-circle border me-1"
+                            width="30"
+                            height="30"
+                            alt="user"
+                            style="object-fit: cover;"
+                        >
+
                         <input
                             class="form-control rounded-pill m-1" 
                             style="width: 100px; height: 35px;" 
@@ -182,9 +194,9 @@
                             class="form-control rounded-pill w-100 m-1"
                             style="height: 35px;"
                             type="text"
-                            name="review"
+                            name="reviewText"
                             placeholder="Add a review for {{$listing->ownerName}}'s listing..."
-                            value="{{session('createFields.review', '')}}"
+                            value="{{session('createFields.reviewText', '')}}"
                         >
                         
                         <div class="col">
