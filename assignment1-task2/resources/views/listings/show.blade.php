@@ -224,8 +224,12 @@
             const validRatings = [1, 2, 3, 4, 5];
             if (validRatings.includes(Number(e.target.value))){
                 ratingErrorField.textContent = "";
+                ratingInputField.classList.remove('border-danger');
+                ratingInputField.classList.add('border-success');
             } else {
                 ratingErrorField.textContent = "The review rating must be a number between 1 and 5.";
+                ratingInputField.classList.remove('border-success');
+                ratingInputField.classList.add('border-danger');
             }
         }
     
@@ -237,9 +241,13 @@
             const wordCount = e.target.value.trim().split(" ").length;
             if (wordCount >= 3){
                 reviewTextErrorField.textContent = "";
+                reviewTextInputField.classList.remove('border-danger');
+                reviewTextInputField.classList.add('border-success');
             }
             else{
                 reviewTextErrorField.textContent = "The review text must have a minimum of 3 words.";
+                reviewTextInputField.classList.remove('border-success');
+                reviewTextInputField.classList.add('border-danger');
             }
         }
     </script>
