@@ -15,10 +15,9 @@
 </form>
 
 <script>
-    const select = document.getElementById("sortSelect");
-    const form = document.getElementById("sortForm");
-    select.addEventListener("change", submitForm);
-    function submitForm(e) {
-        form.submit();
-    }
+// Listen for changes in the select dropdown
+document.getElementById('sortSelect').addEventListener('change', function() {
+    // Submit the form automatically when the sort option is changed
+    document.getElementById('sortForm').submit();
+});
 </script>

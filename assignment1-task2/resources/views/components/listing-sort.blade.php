@@ -9,14 +9,15 @@
         <option value="rating-asc" {{ $sort == "rating-asc" ? "selected" : "" }}>Lowest Rated</option>
         <option value="reviews-desc" {{ $sort == "reviews-desc" ? "selected" : "" }}>Most Reviews</option>
         <option value="reviews-asc" {{ $sort == "reviews-asc" ? "selected" : "" }}>Fewest Reviews</option>
-        <option value="listing-desc" {{ $sort == "listing-desc" ? "selected" : "" }}>Most Listings</option>
-        <option value="listing-asc" {{ $sort == "listing-asc" ? "selected" : "" }}>Fewest Listings</option>
+        <option value="rent-desc" {{ $sort == "rent-desc" ? "selected" : "" }}>Highest Rent</option>
+        <option value="rent-asc" {{ $sort == "rent-asc" ? "selected" : "" }}>Lowest Rent</option>
     </select>
 </form>
 
 <script>
     const select = document.getElementById("sortSelect");
     const form = document.getElementById("sortForm");
+    
     select.addEventListener("change", submitForm);
     function submitForm(e) {
         form.submit();
