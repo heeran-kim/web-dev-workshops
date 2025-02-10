@@ -79,9 +79,9 @@ For detailed instructions, refer to the PDF below:
 - Directory: `week3/task7/`
   
 #### **Preview**
-| Input Form | Empty Fields | Non-numeric Year |
-|-|-|-|
-| ![Input Form](./task5/screenshots/form.png) | ![empty](./task5/screenshots/empty.png) | ![year](./task5/screenshots/year.png) |
+| Input Form | Results |
+|-|-|
+| ![Input Form](./task3/screenshots/form.png) | ![Results](./task7/screenshots/results.png) |
 
 ---
 
