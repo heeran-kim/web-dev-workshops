@@ -9,47 +9,6 @@ Each folder corresponds to a weekly workshop with tasks designed to build skills
 
 ---
 
-## 🗂 Workshop Overview
-
-```text
-week1/           # Week 1: Development Environment & Responsive Design
-week2/           # Week 2: PHP Part 1
-week3/           # Week 3: PHP Part 2
-week4/           # Week 4: Web Framework
-week5/           # Week 5: Database and SQL
-week6/           # Week 6: CRUD Operations
-week7/           # Week 7: Assignment Work (No lecture)
-week8/           # Week 8: Database Migration & MVC
-week9/           # Week 9: Input Validation & Authentication
-week10/          # Week 10: File Uploads, Pagination, and Date/Time
-week11/          # Week 11: Assignment Work (No lecture)
-week12/          # Week 12: Final Assignment Demonstration
-```
-
----
-
-## 📝 Assignments Overview
-- **Assignment 1**: [Simple CRUD Web Application Repository](https://github.com/yourusername/assignment1-repo)  
-- **Assignment 2**: [Advanced Web Application Repository](https://github.com/yourusername/assignment2-repo)
-
----
-
-## 📚 Course Overview
-This course introduces the systematic development of dynamic, database-backed web applications using HTML/CSS, server-side programming languages (such as PHP), and modern web frameworks (e.g., Laravel). Through weekly exercises and projects, students will gain hands-on experience with CRUD operations, user authentication, database integration, input validation, and secure web application development.
-
----
-
-## 🛠 Tech Stack & Tools
-During the course, you will use various technologies and tools, including:
-
-- **Programming Languages**: PHP, HTML, CSS, JavaScript  
-- **Web Frameworks**: Laravel  
-- **Database**: MySQL, SQLite  
-- **Development Environment**: Composer, Laravel Valet (or alternative server setup)  
-- **Version Control**: Git and GitHub  
-
----
-
 ## 🛠 Weekly Topics & Learning Objectives
 
 | Week | Topic                                | Description                                    |
@@ -64,6 +23,53 @@ During the course, you will use various technologies and tools, including:
 | 9    | Input Validation & Authentication    | Implementing validation rules and user authentication |
 | 10   | File Uploads, Pagination, Date/Time  | Managing file uploads, pagination, and date handling |
 
+---
+
+## 🗂 Workshop Overview
+
+#### Week 1: Development Environment & Responsive Design
+| Desktop View | Tablet View | Mobile View |
+|---|---|---|
+| ![Desktop View](./week1/task4/screenshots/desktop.png) | ![Tablet View](./week1/task4/screenshots/tablet.png) | ![Mobile View](./week1/task4/screenshots/mobile.png) |
+
+#### Week 2: PHP Part 1
+![Week 2 Preview](./week1/screenshots/week1-preview.png)
+#### Week 3: PHP Part 2
+![Week 3 Preview](./week1/screenshots/week1-preview.png)
+#### Week 4: Web Framework
+![Week 4 Preview](./week1/screenshots/week1-preview.png)
+#### Week 5: Database and SQL
+![Week 5 Preview](./week1/screenshots/week1-preview.png)
+#### Week 6: CRUD Operations
+![Week 6 Preview](./week1/screenshots/week1-preview.png)
+#### Week 8: Database Migration & MVC
+![Week 8 Preview](./week1/screenshots/week1-preview.png)
+#### Week 9: Input Validation & Authentication
+![Week 9 Preview](./week1/screenshots/week1-preview.png)
+#### Week 10: File Uploads, Pagination, and Date/Time
+![Week 10 Preview](./week1/screenshots/week1-preview.png)
+
+---
+
+## 🛠 Tech Stack & Tools
+During the course, you will use various technologies and tools, including:
+
+- **Programming Languages**: PHP, HTML, CSS, JavaScript  
+- **Web Frameworks**: Laravel  
+- **Database**: MySQL, SQLite  
+- **Development Environment**: Composer, Laravel Valet (or alternative server setup)  
+- **Version Control**: Git and GitHub  
+
+---
+
+## 📝 Assignments Overview
+- **Assignment 1**: [Simple CRUD Web Application Repository](https://github.com/yourusername/assignment1-repo)  
+- **Assignment 2**: [Advanced Web Application Repository](https://github.com/yourusername/assignment2-repo)
+
+---
+
+## 📚 Course Overview
+This course introduces the systematic development of dynamic, database-backed web applications using HTML/CSS, server-side programming languages (such as PHP), and modern web frameworks (e.g., Laravel). Through weekly exercises and projects, students will gain hands-on experience with CRUD operations, user authentication, database integration, input validation, and secure web application development.
 
 ---
 

@@ -16,18 +16,56 @@ For detailed instructions, refer to the PDF below:
 ---
 
 ## 🛠 Tasks Overview
-1. **Task 1**: Set up the development environment and create a simple "Hello World" HTML page.
-2. **Task 2**: Create a multi-page HTML project using various HTML elements.
-3. **Task 3**: Design a responsive social network page with Bootstrap.
-4. **Task 4**: Customize a Bootstrap template to match your design requirements.
+
+### **Task 1: Development Environment Setup**
+- Create a simple "Hello World" HTML page.
+- Directory: `week1/task1/`
+
+---
+
+### **Task 2: Profile Page with HTML and CSS**
+- Create a profile page for **David Tenant, PhD**.
+- Include a navigation bar, profile section, and a table.
+- Directory: `week1/task2/`
+  
+#### **Preview**
+| Home Page | About Page |
+|--------------|-------------|
+| ![Home Page](./task2/screenshots/home.png) | ![About Page](./task2/screenshots/about.png) |
+
+---
+
+### **Task 3: Responsive Page with Bootstrap**
+- Build a responsive social media page with posts and a form.
+- Use Bootstrap’s grid system to create a responsive layout.
+- Directory: `week1/task3/`
+
+#### **Preview**
+| Desktop View | Mobile View |
+|--------------|-------------|
+| ![Desktop View](./task3/screenshots/desktop.png) | ![Mobile View](./task3/screenshots/mobile.png) |
+
+---
+
+### **Task 4 : Customize Bootstrap Template**
+- Create a fully responsive social media page by customizing a Bootstrap template.
+- Include a header, sidebar, posts, and a footer.
+- Directory: `week1/task4/`
+
+#### **Preview**
+| Desktop View | Tablet View | Mobile View |
+|---|---|---|
+| ![Desktop View](./task4/screenshots/desktop.png) | ![Tablet View](./task4/screenshots/tablet.png) | ![Mobile View](./task4/screenshots/mobile.png) |
 
 ---
 
 ## 📂 Files & Directory Structure
 ```text
-task1/
-task2/
-task3/
-task4/
-Exercise 1 - HTML and Bootstrap.pdf
+week1/
+  ├── README.md
+  ├── Exercise 1 - HTML and Bootstrap.pdf
+  ├── task1/
+  ├── task2/
+  ├── task3/
+  └── task4/
 ```
