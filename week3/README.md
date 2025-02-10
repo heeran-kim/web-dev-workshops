@@ -49,6 +49,18 @@ For detailed instructions, refer to the PDF below:
 
 ---
 
+### **Task 7: Improved Factorise Example – History with File Handling**
+- Goal: Modify the factorisation solution to store each factorisation result in a text file. The factorisation results are appended to the file, and then displayed as a list of all previous factorisations below the current one.
+- Implementation: After performing the factorisation, the result is written to a file using PHP’s file handling functions (fopen(), fputs(), fclose()). Additionally, all previous factorisations are read from the file and displayed below the new factorisation result.
+- Directory: `week3/task7/`
+  
+#### **Preview**
+| Input Form | First Factorisation Entry | Multiple Factorisations History |
+|-|-|-|
+| ![Input Form](./task7/screenshots/input.png) | ![First Entry](./task7/screenshots/first.png) | ![Multiple History](./task7/screenshots/multiple.png) |
+
+---
+
 ### **Task 4: Prime Ministers Example – Searching**
 - Goal: Implement a simple search functionality for the Australian Prime Ministers’ data to filter results based on a query.
 - Details: In this task, the data is stored in an associative array simulating a database. A search function is implemented to search through the prime ministers’ data based on user input, such as name, party, state, and other details. The search results are displayed on the same page.
@@ -70,18 +82,6 @@ For detailed instructions, refer to the PDF below:
 | Input Form | Empty Fields | Non-numeric Year |
 |-|-|-|
 | ![Input Form](./task5/screenshots/form.png) | ![empty](./task5/screenshots/empty.png) | ![year](./task5/screenshots/year.png) |
-
----
-
-### **Task 7: Improved Factorise Example – File Handling**
-- Goal: Modify the factorisation solution to store each factorisation result in a text file. The factorisation results are appended to the file, and then displayed as a list of all previous factorisations below the current one.
-- Implementation: After performing the factorisation, the result is written to a file using PHP’s file handling functions (fopen(), fputs(), fclose()). Additionally, all previous factorisations are read from the file and displayed below the new factorisation result.
-- Directory: `week3/task7/`
-  
-#### **Preview**
-| Input Form | Results |
-|-|-|
-| ![Input Form](./task3/screenshots/form.png) | ![Results](./task7/screenshots/results.png) |
 
 ---
 
