@@ -28,13 +28,17 @@ Each folder corresponds to a weekly workshop with tasks designed to build skills
 ## 🗂 Workshop Overview
 
 #### Week 1: Development Environment & Responsive Design
-Set up a development environment and built a responsive social media page using HTML and Bootstrap, implementing basic structure and layout.
+Set up a development environment and built a **responsive** social media page using HTML and Bootstrap, implementing basic structure and layout.
+- Directory: `week1/task4/`
+
 | Desktop View | Tablet View | Mobile View |
 |---|---|---|
 | ![Desktop View](./week1/task4/screenshots/desktop.png) | ![Tablet View](./week1/task4/screenshots/tablet.png) | ![Mobile View](./week1/task4/screenshots/mobile.png) |
 
 #### Week 2: PHP Part 1
-Implemented a social media page using PHP with object-oriented principles by creating Post and Comment classes, and enhanced code clarity and data safety through type declarations.
+Implemented a social media page using PHP with **object-oriented principles** by creating Post and Comment classes, and enhanced code clarity and data safety through type declarations.
+- Directory: `week2/task2/`
+
 | Desktop View (≥ 992px)                    | Tablet View (Large: 768px ~ 991px)          | Tablet View (Small: 576px ~ 767px)          | Mobile View (≤ 575px)                      |
 |--------------------------------------------|---------------------------------------------|---------------------------------------------|---------------------------------------------|
 | ![Desktop View](./week2/task2/screenshots/desktop.png) | ![Tablet Large View](./week2/task2/screenshots/tablet-large.png) | ![Tablet Small View](./week2/task2/screenshots/tablet-small.png) | ![Mobile View](./week2/task2/screenshots/mobile.png) |
@@ -42,7 +46,13 @@ Implemented a social media page using PHP with object-oriented principles by cre
 **Note:** Comment sections have been added to each post (not functional).
 
 #### Week 3: PHP Part 2
-![Week 3 Preview](./week1/screenshots/week1-preview.png)
+This week builds upon the Week 2 social media page by implementing **form handling** in PHP. Users can submit comments via forms using GET requests, with data stored and accessed through PHP **superglobals** like $_GET and $_REQUEST. The comment functionality was further enhanced by using PHP **sessions** to persist data across page reloads.Other tasks in this workshop demonstrated input validation, error handling, and file handling.
+- Directory: `week3/social-session/`
+
+| Home Page | Comment Added |
+|-|-|
+| ![Home Page](./week3/social-session/screenshots/home.png) | ![Comment Added](./week3/social-session/screenshots/results.png) |
+
 #### Week 4: Web Framework
 ![Week 4 Preview](./week1/screenshots/week1-preview.png)
 #### Week 5: Database and SQL

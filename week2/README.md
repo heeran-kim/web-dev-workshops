@@ -48,7 +48,7 @@ For detailed instructions, refer to the PDF below:
 
 ## 📂 Files & Directory Structure
 ```text
-week1/
+week2/
   ├── README.md
   ├── Exercise 2 - PHP.pdf
   ├── task1/
