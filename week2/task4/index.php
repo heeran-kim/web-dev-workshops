@@ -11,7 +11,7 @@
     $posts['Post1']->addComment('Min', 'Amy! Nice');
     $posts['Post2']->addComment('Emma', 'Bryan! That is cute!');
     $posts['Post3']->addComment('Frank', 'Carl! Nice picture!');
-    // $posts['post3']->addComment('Frank', 1); // type error
+    $posts['post3']->addComment('Frank', 1); // type error
 ?>
         
 <!DOCTYPE html>

@@ -28,12 +28,19 @@ Each folder corresponds to a weekly workshop with tasks designed to build skills
 ## 🗂 Workshop Overview
 
 #### Week 1: Development Environment & Responsive Design
+Set up a development environment and built a responsive social media page using HTML and Bootstrap, implementing basic structure and layout.
 | Desktop View | Tablet View | Mobile View |
 |---|---|---|
 | ![Desktop View](./week1/task4/screenshots/desktop.png) | ![Tablet View](./week1/task4/screenshots/tablet.png) | ![Mobile View](./week1/task4/screenshots/mobile.png) |
 
 #### Week 2: PHP Part 1
-![Week 2 Preview](./week1/screenshots/week1-preview.png)
+Implemented a social media page using PHP with object-oriented principles by creating Post and Comment classes, and enhanced code clarity and data safety through type declarations.
+| Desktop View (≥ 992px)                    | Tablet View (Large: 768px ~ 991px)          | Tablet View (Small: 576px ~ 767px)          | Mobile View (≤ 575px)                      |
+|--------------------------------------------|---------------------------------------------|---------------------------------------------|---------------------------------------------|
+| ![Desktop View](./week2/task2/screenshots/desktop.png) | ![Tablet Large View](./week2/task2/screenshots/tablet-large.png) | ![Tablet Small View](./week2/task2/screenshots/tablet-small.png) | ![Mobile View](./week2/task2/screenshots/mobile.png) |
+
+**Note:** Comment sections have been added to each post (not functional).
+
 #### Week 3: PHP Part 2
 ![Week 3 Preview](./week1/screenshots/week1-preview.png)
 #### Week 4: Web Framework
