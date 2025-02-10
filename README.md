@@ -5,26 +5,25 @@
 ## 📘 Repository Overview
 This repository contains **workshops and exercises** completed as part of the **Web Application Development** course at Griffith University. The workshops cover topics such as web development basics, server-side programming, database integration, CRUD operations, and secure web application development.
 
-Each folder under `workshops/` corresponds to a weekly workshop with tasks designed to build skills in full-stack web development.
+Each folder corresponds to a weekly workshop with tasks designed to build skills in full-stack web development.
 
 ---
 
-## 📂 Folder Structure
+## 🗂 Workshop Overview
 
 ```text
-workshops/
-  ├── week1/           # Week 1: Development Environment & Responsive Design
-  ├── week2/           # Week 2: PHP Part 1
-  ├── week3/           # Week 3: PHP Part 2
-  ├── week4/           # Week 4: Web Framework
-  ├── week5/           # Week 5: Database and SQL
-  ├── week6/           # Week 6: CRUD Operations
-  ├── week7/           # Week 7: Assignment Work (No lecture)
-  ├── week8/           # Week 8: Database Migration & MVC
-  ├── week9/           # Week 9: Input Validation & Authentication
-  ├── week10/          # Week 10: File Uploads, Pagination, and Date/Time
-  ├── week11/          # Week 11: Assignment Work (No lecture)
-  └── week12/          # Week 12: Final Assignment Demonstration
+week1/           # Week 1: Development Environment & Responsive Design
+week2/           # Week 2: PHP Part 1
+week3/           # Week 3: PHP Part 2
+week4/           # Week 4: Web Framework
+week5/           # Week 5: Database and SQL
+week6/           # Week 6: CRUD Operations
+week7/           # Week 7: Assignment Work (No lecture)
+week8/           # Week 8: Database Migration & MVC
+week9/           # Week 9: Input Validation & Authentication
+week10/          # Week 10: File Uploads, Pagination, and Date/Time
+week11/          # Week 11: Assignment Work (No lecture)
+week12/          # Week 12: Final Assignment Demonstration
 ```
 
 ---
@@ -51,7 +50,7 @@ During the course, you will use various technologies and tools, including:
 
 ---
 
-## 🛠 Course Structure & Weekly Workshops
+## 🛠 Weekly Topics & Learning Objectives
 
 | Week | Topic                                | Description                                    |
 |------|---------------------------------------|------------------------------------------------|
