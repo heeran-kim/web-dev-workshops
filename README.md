@@ -69,10 +69,10 @@ In Week 5, a relational schema was designed using SQLite, defining entity relati
 - Directory: `week5/`
 
 #### Week 6 & 8: CRUD Operations & Database Migration & MVC
-While separate workshop tasks for these weeks were not completed, full CRUD operations, database migrations, and MVC structure were extensively implemented in Assignment 1. [**View Assignment1**](https://github.com/yourusername/assignment1-repo)
+While separate workshop tasks for these weeks were not completed, full CRUD operations, database migrations, and MVC structure were extensively implemented in Assignment 1. [**View Assignment1**](https://github.com/heeran-kim/easystay-web)
 
 #### Week 9 & 10: Input Validation, Authentication, and File Handling
-These topics were covered in the final project, including secure authentication, input validation, file uploads, and pagination using Laravel’s built-in validation rules and middleware security measures. [**View Assignment2**](https://github.com/yourusername/assignment2-repo)
+These topics were covered in the final project, including secure authentication, input validation, file uploads, and pagination using Laravel’s built-in validation rules and middleware security measures. [**View Assignment2**](https://github.com/heeran-kim/classmate-web)
 
 ---
 
@@ -87,8 +87,8 @@ This course utilised the following technologies and tools:
 ---
 
 ## 📝 Assignments Overview
-- **Assignment 1**: [Simple CRUD Web Application Repository](https://github.com/yourusername/assignment1-repo)  
-- **Assignment 2**: [Advanced Web Application Repository](https://github.com/yourusername/assignment2-repo)
+- **Assignment 1**: [Simple CRUD Web Application Repository](https://github.com/heeran-kim/easystay-web)  
+- **Assignment 2**: [Advanced Web Application Repository](https://github.com/heeran-kim/classmate-web)
 
 ---
 
