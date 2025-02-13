@@ -30,7 +30,7 @@ class PostingController extends Controller
     // store: store posting info into database
     function store(Request $request) {
         $formFields = $request->validate([
-            'title' => ['required', 'max:10'],
+            'title' => ['required', 'max:15'],
             'description' => 'required'
         ]);
 

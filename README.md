@@ -28,25 +28,25 @@ Each folder corresponds to a weekly workshop with tasks designed to build skills
 ## 🗂 Workshop Overview
 
 #### Week 1: Development Environment & Responsive Design
-Set up a development environment and built a **responsive** social media page using HTML and Bootstrap, implementing basic structure and layout.
-- Directory: `week1/task4/`
+Set up a development environment and built a **responsive** social media page using HTML and Bootstrap, implementing basic structure and layout. [**View Details**](./week1/README.md)
+- Directory: `week1/task4/` 
 
 | Desktop View | Tablet View | Mobile View |
 |---|---|---|
 | ![Desktop View](./week1/task4/screenshots/desktop.png) | ![Tablet View](./week1/task4/screenshots/tablet.png) | ![Mobile View](./week1/task4/screenshots/mobile.png) |
 
 #### Week 2: PHP Part 1
-Implemented a social media page using PHP with **object-oriented principles** by creating Post and Comment classes, and enhanced code clarity and data safety through type declarations.
+Implemented a social media page using PHP with **object-oriented principles** by creating Post and Comment classes, and enhanced code clarity and data safety through type declarations. [**View Details**](./week2/README.md)
 - Directory: `week2/task2/`
 
 | Desktop View (≥ 992px)                    | Tablet View (Large: 768px ~ 991px)          | Tablet View (Small: 576px ~ 767px)          | Mobile View (≤ 575px)                      |
 |--------------------------------------------|---------------------------------------------|---------------------------------------------|---------------------------------------------|
 | ![Desktop View](./week2/task2/screenshots/desktop.png) | ![Tablet Large View](./week2/task2/screenshots/tablet-large.png) | ![Tablet Small View](./week2/task2/screenshots/tablet-small.png) | ![Mobile View](./week2/task2/screenshots/mobile.png) |
 
-**Note:** Comment sections have been added to each post (not functional).
+**Note:** Comment sections are not functional yet.
 
 #### Week 3: PHP Part 2
-This week builds upon the Week 2 social media page by implementing **form handling** in PHP. Users can submit comments via forms using GET requests, with data stored and accessed through PHP **superglobals** like $_GET and $_REQUEST. The comment functionality was further enhanced by using PHP **sessions** to persist data across page reloads.Other tasks in this workshop demonstrated input validation, error handling, and file handling.
+This week builds upon the Week 2 social media page by implementing **form handling** in PHP. Users can submit comments via forms using GET requests, with data stored and accessed through PHP **superglobals** like $_GET and $_REQUEST. The comment functionality was further enhanced by using PHP **sessions** to persist data across page reloads. Other tasks in this workshop demonstrated input validation, error handling, and file handling. [**View Details**](./week3/README.md)
 - Directory: `week3/social-session/`
 
 | Home Page | Comment Added |
@@ -54,17 +54,17 @@ This week builds upon the Week 2 social media page by implementing **form handli
 | ![Home Page](./week3/social-session/screenshots/home.png) | ![Comment Added](./week3/social-session/screenshots/results.png) |
 
 #### Week 4: Web Framework
-![Week 4 Preview](./week1/screenshots/week1-preview.png)
+[**View Details**](./week4/README.md)
 #### Week 5: Database and SQL
-![Week 5 Preview](./week1/screenshots/week1-preview.png)
+[**View Details**](./week5/README.md)
 #### Week 6: CRUD Operations
-![Week 6 Preview](./week1/screenshots/week1-preview.png)
+Skipped – While this specific workshop task was not completed, this operation was implemented in the assignment. [**View Assignment**](https://github.com/yourusername/assignment1-repo)
 #### Week 8: Database Migration & MVC
-![Week 8 Preview](./week1/screenshots/week1-preview.png)
+[**View Details**](./week8/README.md)
 #### Week 9: Input Validation & Authentication
-![Week 9 Preview](./week1/screenshots/week1-preview.png)
+Skipped – While this specific workshop task was not completed, these concepts were in the assignment. [**View Assignment**](https://github.com/yourusername/assignment2-repo)
 #### Week 10: File Uploads, Pagination, and Date/Time
-![Week 10 Preview](./week1/screenshots/week1-preview.png)
+Skipped – While this specific workshop task was not completed, these concepts were in the assignment. [**View Assignment**](https://github.com/yourusername/assignment2-repo)
 
 ---
 

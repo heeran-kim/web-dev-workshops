@@ -17,9 +17,7 @@
                 <input type="file" class="form-control" name="image">
 
                 <label for="description" class="form-label mt-3">Description</label>
-                <textarea class="form-control" name="description" rows="5">
-                {{old('description')}}
-                </textarea>
+                <textarea class="form-control" name="description" rows="5">{{old('description')}}</textarea>
                 @error('description')
                     <p class="text-danger">{{$message}}</p>
                 @enderror
