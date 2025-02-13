@@ -54,7 +54,14 @@ This week builds upon the Week 2 social media page by implementing **form handli
 | ![Home Page](./week3/social-session/screenshots/home.png) | ![Comment Added](./week3/social-session/screenshots/results.png) |
 
 #### Week 4: Web Framework
-[**View Details**](./week4/README.md)
+Week 4 focuses on **Laravel**, covering routing, controllers, Blade templating, and CSRF protection. These concepts were applied in tasks such as user information forms, session management, and dynamic UI rendering.
+
+The highlight of this week is My Social, a social media app where users can sign up, create posts, and leave comments. It integrates authentication, CRUD operations, and interactive UI enhancements using Laravel’s MVC architecture, Blade templates, and Eloquent ORM, while JavaScript improves the user experience with dynamic interactions.[**View Details**](./week4/README.md)
+- Directory: `week4/task6/`
+
+| Guest View | Sign Up | Login | Create Post | User View | Leave Comment |
+|-|-|-|-|-|-|
+| ![Guest View](./week4/task6/screenshots/guest.png) | ![Sign Up](./week4/task6/screenshots/signup.png) | ![Login](./week4/task6/screenshots/login.png) | ![Create Post](./week4/task6/screenshots/post.png) | ![User View](./week4/task6/screenshots/user.png) | ![Leave Comment](./week4/task6/screenshots/comment.png) |
 #### Week 5: Database and SQL
 [**View Details**](./week5/README.md)
 #### Week 6: CRUD Operations
